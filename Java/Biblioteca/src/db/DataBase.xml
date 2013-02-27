@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<DataBase>
+    <authors>
+        <author>
+            <id>0</id>
+            <name>Robert James</name>
+            <lastname>Sawyer</lastname>
+            <nationality>Canadiense</nationality>
+        </author>
+        <author>
+            <id>1</id>
+            <name>Charles Michael</name>
+            <lastname>Palahniuk</lastname>
+            <nationality>Estadounidense</nationality>
+        </author>
+    </authors>
+    <books>
+        <book>
+            <isbn>ASDDGFR5</isbn>
+            <title>Recuerdos del futuro</title>
+            <type>NOVELA</type>
+            <editorial>Gold</editorial>
+            <edition>2</edition>
+            <year>1996</year>
+            <author>0</author>
+        </book>
+    </book>
+</DataBase>
