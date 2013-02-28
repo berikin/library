@@ -8,13 +8,13 @@ package gui;
  *
  * @author berik
  */
-public class NewJFrame extends javax.swing.JFrame {
+public class ConvertiroGrados extends javax.swing.JFrame {
 String a1="hola mundo";
 String a2="Adios mundo";
     /**
      * Creates new form NewJFrame
      */
-    public NewJFrame() {
+    public ConvertiroGrados() {
         initComponents();
     lastTXT=jTextFieldCent;
     }
@@ -174,20 +174,20 @@ String a2="Adios mundo";
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ConvertiroGrados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ConvertiroGrados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ConvertiroGrados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ConvertiroGrados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new NewJFrame().setVisible(true);
+                new ConvertiroGrados().setVisible(true);
             }
         });
     }
