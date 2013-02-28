@@ -36,12 +36,12 @@ public class BookDAL {
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             Document doc = docBuilder.parse(new File("src/db/DBbooks.xml"));
             doc.getDocumentElement().normalize();
-            NodeList authorNodes = doc.getElementsByTagName("book");
+            NodeList bookNondes = doc.getElementsByTagName("book");
 
-            for (int i = 0; i < authorNodes.getLength(); i++) {
-                Node author = authorNodes.item(i);
-                if (author.getNodeType() == Node.ELEMENT_NODE) {
-                    Element anElement = (Element) author;
+            for (int i = 0; i < bookNondes.getLength(); i++) {
+                Node book = bookNondes.item(i);
+                if (book.getNodeType() == Node.ELEMENT_NODE) {
+                    Element anElement = (Element) book;
                     Book objBook = new Book();
                     objBook.setISBN(getNodeValue("isbn", anElement));
                     objBook.setTitle(getNodeValue("title", anElement));

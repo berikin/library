@@ -8,7 +8,7 @@ package classes;
  *
  * @author berik
  */
-public class Copy extends Book {
+public class Copy {
     enum CopyState{BORROWED,STORED};
     private int bookCode;
     private CopyState state;

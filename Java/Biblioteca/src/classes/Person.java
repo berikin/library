@@ -8,13 +8,13 @@ package classes;
  *
  * @author berik
  */
-abstract class Person {
+public class Person {
     protected String name, lastname;
 
-    protected Person(String name, String lastname) {
+   /* protected Person(String name, String lastname) {
         this.name = name;
         this.lastname = lastname;
-    }
+    }*/
 
     public String getName() {
         return name;
@@ -30,6 +30,11 @@ abstract class Person {
 
     public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+    
+    @Override
+    public String toString(){
+    return (name+" "+lastname);
     }
     
 }

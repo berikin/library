@@ -9,8 +9,8 @@ package classes;
  * @author berik
  */
 public class Author {
-    protected String name, lastname, nationality;
-    protected int id;
+    private String name, lastname, nationality;
+    private int id;
 
     public int getId() {
         return id;

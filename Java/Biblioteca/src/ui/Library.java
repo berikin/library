@@ -34,6 +34,14 @@ public class Library {
         System.out.println("Código: "+listCopies.get(i).getBookCode());
         System.out.println("Estado: "+listCopies.get(i).getState());
         System.out.println("Libro: "+listCopies.get(i).getBook());
+        System.out.println(listCopies.get(i).getBook().getAuthor().get(0).getNationality());
     }
+    Member miembro=new Member();
+    miembro.setMemberID(1);
+    miembro.setPersonName("Pepe");
+    miembro.setPersonLastName("Perez");
+        System.out.println(miembro.getPersonName());
+        System.out.println(miembro.getPersonLastName());
+        System.out.println(miembro.getMemberID());
     }
 }

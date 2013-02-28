@@ -10,16 +10,16 @@ import java.util.ArrayList;
  *
  * @author berik
  */
-public class Book extends Author {
+public class Book {
 
     enum BookType {
 
         CUENTO, NARRATIVA, CONOCIMIENTOS, MISTERIO, NOVELA, HISTORIA, NOTICIAS
     };
-    protected String ISBN, title, editorial;
-    protected BookType type;
-    protected int edition, year;
-    protected ArrayList<Author> author = new ArrayList();
+    private String ISBN, title, editorial;
+    private BookType type;
+    private int edition, year;
+    private ArrayList<Author> author = new ArrayList();
 
     public BookType getType() {
         return type;
