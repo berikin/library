@@ -4,15 +4,30 @@
  */
 package classes;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author berik
  */
 public class Book extends Author {
+
+    enum BookType {
+
+        CUENTO, NARRATIVA, CONOCIMIENTOS, MISTERIO, NOVELA, HISTORIA, NOTICIAS
+    };
     protected String ISBN, title, editorial;
-    protected enum type{CUENTO,NARRATIVA,CONOCIMIENTOS,MISTERIO,NOVELA,HISTORIA,NOTICIAS};
+    protected BookType type;
     protected int edition, year;
-    protected Author author;
+    protected ArrayList<Author> author = new ArrayList();
+
+    public BookType getType() {
+        return type;
+    }
+
+    public void setType(BookType type) {
+        this.type = type;
+    }
 
     public String getISBN() {
         return ISBN;
@@ -54,12 +69,36 @@ public class Book extends Author {
         this.year = year;
     }
 
-    public Author getAuthor() {
+    public ArrayList<Author> getAuthor() {
         return author;
     }
 
     public void setAuthor(Author author) {
-        this.author = author;
+        this.author.add(author);
     }
-    
+
+    @Override
+    public String toString() //{return (this.title+" (de "+this.author+")");}
+    {
+        String authors = "";
+        if (this.author.size() != 1) {
+            for (int i = 0; i < this.author.size() - 1; i++) {
+                authors = authors + this.author.get(i);
+                if (i < this.author.size() - 2) {
+                    authors = authors + ", ";
+                }
+            }
+            authors = authors + " y " + this.author.get(this.author.size() - 1);
+
+        } else {
+            authors = authors + this.author.get(this.author.size() - 1);
+        }
+        return (this.title + " (de " + authors + ")");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Book a = (Book) obj;
+        return ISBN.equals(a.getISBN());
+    }
 }

@@ -4,8 +4,7 @@
  */
 package ui;
 
-import classes.Author;
-import classes.AuthorDAL;
+import classes.*;
 import java.util.ArrayList;
 /**
  *
@@ -14,14 +13,27 @@ import java.util.ArrayList;
 public class Library {
     public static void main (String args[])
     {
-        System.out.println("Info");
-        AuthorDAL objAuthorDAL= new AuthorDAL();
-        ArrayList<Author> listAuthors=objAuthorDAL.getAuthors();
-    for(int i=0;i<listAuthors.size();i++)
+        System.out.println("LIBROS");
+        BookDAL objBookDAL= new BookDAL();
+        ArrayList<Book> listBooks=objBookDAL.getBooks();
+    for(int i=0;i<listBooks.size();i++)
     {
-        System.out.println("Nombre:" +listAuthors.get(i).getName());
-        System.out.println("Apellidos:" +listAuthors.get(i).getLastname());
-        System.out.println("Nacionalidad:" +listAuthors.get(i).getNationality());
+        System.out.println("ISBN:" +listBooks.get(i).getISBN());
+        System.out.println("Título:" +listBooks.get(i).getTitle());
+        System.out.println("Tipo:" +listBooks.get(i).getType());
+        System.out.println("Editorial:" +listBooks.get(i).getEditorial());
+        System.out.println("Edición:" +listBooks.get(i).getEdition());
+        System.out.println("Anyo:" +listBooks.get(i).getYear());
+        System.out.println("Autor:" +listBooks.get(i).getAuthor());
+    }
+        System.out.println("COPIAS");
+        CopyDAL objCopyDAL= new CopyDAL();
+        ArrayList<Copy> listCopies=objCopyDAL.getCopies();
+    for(int i=0;i<listCopies.size();i++)
+    {
+        System.out.println("Código: "+listCopies.get(i).getBookCode());
+        System.out.println("Estado: "+listCopies.get(i).getState());
+        System.out.println("Libro: "+listCopies.get(i).getBook());
     }
     }
 }

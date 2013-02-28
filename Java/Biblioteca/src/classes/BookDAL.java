@@ -7,13 +7,14 @@ package classes;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -27,13 +28,13 @@ public class BookDAL {
     }
 
     public ArrayList<Book> getBooks() {
-        AuthorDAL objAuthorDAL= new AuthorDAL();
-        ArrayList<Author> listAuthors=objAuthorDAL.getAuthors();
+        AuthorDAL objAuthorDAL = new AuthorDAL();
+        ArrayList<Author> listAuthors = objAuthorDAL.getAuthors();
         ArrayList<Book> bookList = new ArrayList();
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse(new File("src/db/DataBase.xml"));
+            Document doc = docBuilder.parse(new File("src/db/DBbooks.xml"));
             doc.getDocumentElement().normalize();
             NodeList authorNodes = doc.getElementsByTagName("book");
 
@@ -44,15 +45,50 @@ public class BookDAL {
                     Book objBook = new Book();
                     objBook.setISBN(getNodeValue("isbn", anElement));
                     objBook.setTitle(getNodeValue("title", anElement));
-                    int authorid=Integer.parseInt(getNodeValue("author", anElement));
-                    Author myAuthor=new Author();
-                    myAuthor.setId(authorid);
-                    int comparation=listAuthors.indexOf(myAuthor);
-                    if (comparation!=-1)
-                    {   Author finalAuthor=new Author();
-                    finalAuthor.setId(listAuthors.get(comparation).getId());
-                    finalAuthor.setName(listAuthors.get(comparation).getName());
-                    objBook.setAuthor(finalAuthor);
+                    String type = getNodeValue("type", anElement);
+                    switch (type) {
+                        case "CONOCIMIENTOS":
+                            objBook.setType(Book.BookType.CONOCIMIENTOS);
+                            break;
+                        case "CUENTO":
+                            objBook.setType(Book.BookType.CUENTO);
+                            break;
+                        case "HISTORIA":
+                            objBook.setType(Book.BookType.HISTORIA);
+                            break;
+                        case "MISTERIO":
+                            objBook.setType(Book.BookType.MISTERIO);
+                            break;
+                        case "NARRATIVA":
+                            objBook.setType(Book.BookType.NARRATIVA);
+                            break;
+                        case "NOTICIAS":
+                            objBook.setType(Book.BookType.NOTICIAS);
+                            break;
+                        case "NOVELA":
+                            objBook.setType(Book.BookType.NOVELA);
+                            break;
+                        default:
+                            throw new AssertionError();
+                    }
+                    objBook.setEditorial(getNodeValue("editorial", anElement));
+                    objBook.setEdition(Integer.parseInt(getNodeValue("edition", anElement)));
+                    objBook.setYear(Integer.parseInt(getNodeValue("year", anElement)));
+                    String authors = getNodeValue("author", anElement);
+                    StringTokenizer st = new StringTokenizer(authors, ",");
+                    for (int j = 0; j <= st.countTokens(); j++) {
+                        int authorid = Integer.parseInt(st.nextToken());
+                        Author myAuthor = new Author();
+                        myAuthor.setId(authorid);
+                        int comparation = listAuthors.indexOf(myAuthor);
+                        if (comparation != -1) {
+                            Author finalAuthor = new Author();
+                            finalAuthor.setId(listAuthors.get(comparation).getId());
+                            finalAuthor.setName(listAuthors.get(comparation).getName());
+                            finalAuthor.setLastname(listAuthors.get(comparation).getLastname());
+                            finalAuthor.setNationality(listAuthors.get(comparation).getNationality());
+                            objBook.setAuthor(finalAuthor);
+                        }
                     }
                     bookList.add(objBook);
                 }

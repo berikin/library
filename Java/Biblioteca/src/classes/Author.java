@@ -44,6 +44,11 @@ public class Author {
         this.nationality = nationality;
     }
     
+    @Override
+    public String toString()
+    {return (this.name+" "+this.lastname);}
+    
+    @Override
     public boolean equals(Object obj)
     {
         Author a=(Author)obj;
