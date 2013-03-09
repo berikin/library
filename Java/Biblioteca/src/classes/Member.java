@@ -11,8 +11,24 @@ package classes;
 public class Member extends Person {
 
     private int memberID;
-    private String address;
+    private String address, userid, pwd;
     private int phone;
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
 
     public int getMemberID() {
         return memberID;

@@ -34,7 +34,7 @@ public class BookDAL {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse(new File("src/db/DBbooks.xml"));
+            Document doc = docBuilder.parse(new File("db/DBbooks.xml"));
             doc.getDocumentElement().normalize();
             NodeList bookNondes = doc.getElementsByTagName("book");
 

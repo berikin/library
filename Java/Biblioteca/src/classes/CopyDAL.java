@@ -33,7 +33,7 @@ public class CopyDAL {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse(new File("src/db/DBcopies.xml"));
+            Document doc = docBuilder.parse(new File("db/DBcopies.xml"));
             doc.getDocumentElement().normalize();
             NodeList copyNodes = doc.getElementsByTagName("copy");
 
@@ -89,7 +89,7 @@ public class CopyDAL {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse(new File("src/db/DBcopies.xml"));
+            Document doc = docBuilder.parse(new File("db/DBcopies.xml"));
             doc.getDocumentElement().normalize();
             NodeList copyNodes = doc.getElementsByTagName("copy");
 

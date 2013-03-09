@@ -31,7 +31,7 @@ public class AuthorDAL {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse(new File("src/db/DBauthors.xml"));
+            Document doc = docBuilder.parse(new File("db/DBauthors.xml"));
             doc.getDocumentElement().normalize();
             NodeList authorNodes = doc.getElementsByTagName("author");
 

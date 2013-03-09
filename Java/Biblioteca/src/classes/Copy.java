@@ -9,7 +9,7 @@ package classes;
  * @author berik
  */
 public class Copy {
-    enum CopyState{BORROWED,STORED};
+    public enum CopyState{BORROWED,STORED};
     private int bookCode;
     private CopyState state;
     private Book book;
@@ -37,6 +37,9 @@ public class Copy {
     public void setBook(Book book) {
         this.book = book;
     }
-    
+        public String toString() //{return (this.title+" (de "+this.author+")");}
+    {
+       return(this.book.toString());
+    }
 }
 

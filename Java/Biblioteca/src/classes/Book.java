@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class Book {
 
-    enum BookType {
+    public enum BookType {
 
         CUENTO, NARRATIVA, CONOCIMIENTOS, MISTERIO, NOVELA, HISTORIA, NOTICIAS
     };

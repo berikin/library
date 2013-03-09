@@ -26,30 +26,33 @@ public class MemberDAL {
         return nValue.getNodeValue();
     }
 
-    public ArrayList<Author> getMembers() {
-        ArrayList<Author> authorList = new ArrayList();
+    public ArrayList<Member> getMembers() {
+        ArrayList<Member> memberList = new ArrayList();
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse(new File("src/db/DBauthors.xml"));
+            Document doc = docBuilder.parse(new File("db/DBmembers.xml"));
             doc.getDocumentElement().normalize();
-            NodeList authorNodes = doc.getElementsByTagName("author");
+            NodeList memberNodes = doc.getElementsByTagName("member");
 
-            for (int i = 0; i < authorNodes.getLength(); i++) {
-                Node author = authorNodes.item(i);
-                if (author.getNodeType() == Node.ELEMENT_NODE) {
-                    Element anElement = (Element) author;
-                    Author objAuthor = new Author();
-                    objAuthor.setId(Integer.parseInt(getNodeValue("id", anElement)));
-                    objAuthor.setName(getNodeValue("name", anElement));
-                    objAuthor.setLastname(getNodeValue("lastname", anElement));
-                    objAuthor.setNationality(getNodeValue("nationality", anElement));    
-                    authorList.add(objAuthor);
+            for (int i = 0; i < memberNodes.getLength(); i++) {
+                Node member = memberNodes.item(i);
+                if (member.getNodeType() == Node.ELEMENT_NODE) {
+                    Element anElement = (Element) member;
+                    Member objMember = new Member();
+                    objMember.setMemberID(Integer.parseInt(getNodeValue("id", anElement)));
+                    objMember.setPersonName(getNodeValue("name", anElement));
+                    objMember.setPersonLastName(getNodeValue("lastname", anElement));
+                    objMember.setAddress(getNodeValue("address", anElement));
+                    objMember.setPhone(Integer.parseInt(getNodeValue("phone", anElement)));
+                    objMember.setUserid(getNodeValue("userid", anElement));
+                    objMember.setPwd(getNodeValue("pwd", anElement));
+                    memberList.add(objMember);
                 }
             }
         } catch (ParserConfigurationException | SAXException | IOException parseE) {
             JOptionPane.showMessageDialog(null, parseE.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
         }
-        return authorList;
+        return memberList;
     }
 }
