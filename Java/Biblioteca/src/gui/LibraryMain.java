@@ -1142,6 +1142,7 @@ public class LibraryMain extends javax.swing.JFrame {
             lblBookCopyCode.setText("");
             modelAuthors.clear();
             jButtonBorrowRequest.setVisible(false);
+            lblBookImg.setIcon(null);
         } else {
             Copy b = (Copy) (a);
             lblBookTitle.setText(b.getBook().getTitle());
@@ -1206,15 +1207,14 @@ public class LibraryMain extends javax.swing.JFrame {
         lblPWD.setForeground(new Color(0, 0, 0));
         lblUser.setForeground(new Color(0, 0, 0));
     }
-    
-    private void clearRegistration()
-    {
-    jTextFieldRegisterName.setText("Nombre...");
-    jTextFieldRegisterLastName.setText("Apellidos...");
-    jTextFieldRegisterAddress.setText("Dirección...");
-    jTextFieldRegisterPhone.setText("Número de teléfono...");
-    jTextFieldRegisterUserName.setText("Nombre de usuario...");
-    jTextRegisterPWD.setText("");
+
+    private void clearRegistration() {
+        jTextFieldRegisterName.setText("Nombre...");
+        jTextFieldRegisterLastName.setText("Apellidos...");
+        jTextFieldRegisterAddress.setText("Dirección...");
+        jTextFieldRegisterPhone.setText("Número de teléfono...");
+        jTextFieldRegisterUserName.setText("Nombre de usuario...");
+        jTextRegisterPWD.setText("");
     }
 
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
@@ -1254,6 +1254,8 @@ public class LibraryMain extends javax.swing.JFrame {
                     mainJTabbedPanel.setTitleAt(1, "                       Procesar el préstamo                       ");
                     break;
                 case PREFERENCES:
+                    cl.show(searchAndBorrow, "cardSearchPanel");
+                    mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
                     mainJTabbedPanel.setSelectedIndex(0);
                     break;
                 case SEARCH:
@@ -1303,7 +1305,7 @@ public class LibraryMain extends javax.swing.JFrame {
         // TODO add your handling code here:
         clearLogin();
     }//GEN-LAST:event_ClearLogFromCard
-    
+
     private void colorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_colorToWhite
         // TODO add your handling code here:
         JTextField txf = (JTextField) (evt.getComponent());

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<DBfines>
+    <fines>
+    	<fine>
+			<fineid>1</fineid>
+			<memberid>1</memberid>
+			<startdate>12/03/2012</startdate>
+			<enddate>22/03/2012</enddate>
+			<tax>0.0</tax>
+    	</fine>
+    </fines>
+</DBfines>

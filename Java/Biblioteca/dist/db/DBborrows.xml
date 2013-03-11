@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<DBborrows>
+    <borrows>
+    	<borrow>
+    		<borrowid>1</borrowid>
+    		<memberid>1</memberid>
+    		<copycode>1</copycode>
+    		<datefirst>12/03/2013</datefirst>
+    		<datelast>30/03/2013</datelast>
+    	</borrow>
+    	<borrow>
+    		<borrowid>2</borrowid>
+    		<memberid>1</memberid>
+    		<copycode>1</copycode>
+    		<datefirst>13/03/2013</datefirst>
+    		<datelast>31/03/2013</datelast>
+    	</borrow>
+    </borrows>
+</DBborrows>

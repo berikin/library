@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<DBauthors>
+    <authors>
+        <author>
+            <id>0</id>
+            <name>Robert James</name>
+            <lastname>Sawyer</lastname>
+            <nationality>Canadiense</nationality>
+        </author>
+        <author>
+            <id>1</id>
+            <name>Charles Michael</name>
+            <lastname>Palahniuk</lastname>
+            <nationality>Estadounidense</nationality>
+        </author>
+    </authors>
+</DBauthors>
