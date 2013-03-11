@@ -16,11 +16,18 @@ public class Book {
 
         CUENTO, NARRATIVA, CONOCIMIENTOS, MISTERIO, NOVELA, HISTORIA, NOTICIAS
     };
-    private String ISBN, title, editorial;
+    private String ISBN, title, editorial,img;
     private BookType type;
     private int edition, year;
     private ArrayList<Author> author = new ArrayList();
 
+        public String getImage() {
+        return img;
+    }
+
+    public void setImage(String img) {
+        this.img = img;
+    }
     public BookType getType() {
         return type;
     }

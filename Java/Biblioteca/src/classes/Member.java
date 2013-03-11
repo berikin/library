@@ -4,6 +4,8 @@
  */
 package classes;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author berik
@@ -13,6 +15,37 @@ public class Member extends Person {
     private int memberID;
     private String address, userid, pwd;
     private int phone;
+    private ArrayList<Borrow> borrowedCopies=new ArrayList();
+    private ArrayList<Fine> fines=new ArrayList();
+    
+    public ArrayList<Fine> getFines() {
+        return fines;
+    }
+
+    public void setFines(Fine fines) {
+        this.fines.add(fines);
+    }
+    public void setFines(ArrayList<Fine> fines) {
+        this.fines.clear();
+        for (int i=0; i<fines.size();i++)
+        {
+        this.fines.add(fines.get(i));
+        }
+    }
+    public ArrayList<Borrow> getBorrowedCopies() {
+        return borrowedCopies;
+    }
+
+    public void setBorrowedCopies(Borrow borrowedCopies) {
+        this.borrowedCopies.add(borrowedCopies);
+    }
+    public void setBorrowedCopies(ArrayList<Borrow> borrowedCopies) {
+        this.borrowedCopies.clear();
+        for (int i=0; i<borrowedCopies.size();i++)
+        {
+        this.borrowedCopies.add(borrowedCopies.get(i));
+        }
+    }
 
     public String getUserid() {
         return userid;

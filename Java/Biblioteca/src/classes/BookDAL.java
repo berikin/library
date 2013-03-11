@@ -45,6 +45,7 @@ public class BookDAL {
                     Book objBook = new Book();
                     objBook.setISBN(getNodeValue("isbn", anElement));
                     objBook.setTitle(getNodeValue("title", anElement));
+                    objBook.setImage(getNodeValue("img", anElement));
                     String type = getNodeValue("type", anElement);
                     switch (type) {
                         case "CONOCIMIENTOS":

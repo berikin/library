@@ -8,20 +8,24 @@ and open the template in the editor.
         <book>
             <isbn>978-84-9908-405-3</isbn>
             <title>Recuerdos del futuro</title>
+            <originaltitle>Flashforward</originaltitle>
             <type>NOVELA</type>
             <editorial>La factoria de ideas</editorial>
             <edition>1</edition>
             <year>2010</year>
             <author>0</author>
+            <img>/img/FlashForWard.jpg</img>
         </book>
         <book>
-            <isbn>978-84-9908-405-2</isbn>
-            <title>FlashForward</title>
+            <isbn>978-84-7669-308-7</isbn>
+            <title>El club de la lucha</title>
+            <originaltitle>Fight Club</originaltitle>
             <type>NOVELA</type>
-            <editorial>La factoria de ideas</editorial>
+            <editorial>El Aleph Editores</editorial>
             <edition>1</edition>
-            <year>2010</year>
-            <author>0,1</author>
+            <year>1999</year>
+            <author>1</author>
+            <img>/img/ClubLucha.jpg</img>
         </book>
     </books>
 </DBbooks>

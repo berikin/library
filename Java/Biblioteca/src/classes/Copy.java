@@ -9,10 +9,23 @@ package classes;
  * @author berik
  */
 public class Copy {
-    public enum CopyState{BORROWED,STORED};
+
+    public enum CopyState {
+
+        BORROWED, STORED
+    };
     private int bookCode;
     private CopyState state;
     private Book book;
+
+    public Copy() {
+    }
+
+    public Copy(int bookCode, CopyState state, Book book) {
+        this.bookCode = bookCode;
+        this.state = state;
+        this.book = book;
+    }
 
     public int getBookCode() {
         return bookCode;
@@ -37,9 +50,15 @@ public class Copy {
     public void setBook(Book book) {
         this.book = book;
     }
-        public String toString() //{return (this.title+" (de "+this.author+")");}
+    @Override
+    public boolean equals(Object obj)
     {
-       return(this.book.toString());
+        Copy a=(Copy)obj;
+        return bookCode==a.getBookCode();
+    }
+    @Override
+    public String toString() //{return (this.title+" (de "+this.author+")");}
+    {
+        return (this.book.toString());
     }
 }
-

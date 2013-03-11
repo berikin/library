@@ -16,8 +16,12 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -32,8 +36,14 @@ public class LibraryMain extends javax.swing.JFrame {
         genModelCopies();
         genMembers();
         initComponents();
+        this.setLocationRelativeTo(null);
     }
-enum SwitchPanel{BORROW,PREFERENCES;}
+
+    enum SwitchPanel {
+
+        BORROW, PREFERENCES, SEARCH;
+    }
+
     private void genModelCopies() {
         CopyDAL objCopyDAL = new CopyDAL();
         listCopies = objCopyDAL.getCopies();
@@ -42,10 +52,50 @@ enum SwitchPanel{BORROW,PREFERENCES;}
             modelCopies.addElement(listCopies.get(i));
         }
     }
-    
-        private void genMembers() {
+
+    private void genMembers() {
         MemberDAL objMemberDAL = new MemberDAL();
         listMembers = objMemberDAL.getMembers();
+    }
+
+    private void genBorrows() {
+        //GregorianCalendar d = new GregorianCalendar();
+        if (tableModelBorrow.getRowCount() > 0) {
+            for (int i = tableModelBorrow.getRowCount() - 1; i > -1; i--) {
+                tableModelBorrow.removeRow(i);
+            }
+        }
+        for (int i = 0; i < loggedMember.getBorrowedCopies().size(); i++) {
+            /* d=new GregorianCalendar(loggedMember.getBorrowedCopies().get(i).getBorrowDate().get(2),loggedMember.getBorrowedCopies().get(i).getBorrowDate().get(1),loggedMember.getBorrowedCopies().get(i).getBorrowDate().get(0));
+             d.add(Calendar.DAY_OF_YEAR, 18);
+             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+             Date expirationDate=new Date(dateFormat.format(d.getTime()));
+             System.out.println(expirationDate.getLongFormat());*/
+            Object[] rowData = {loggedMember.getBorrowedCopies().get(i).getBorrowedCopy().getBook().getTitle(), loggedMember.getBorrowedCopies().get(i).getBorrowDate().getLongFormat(), loggedMember.getBorrowedCopies().get(i).getLimitDate().getLongFormat()};
+            tableModelBorrow.addRow(rowData);
+        }
+    }
+
+    private void genFines() {
+        if (tableModelFine.getRowCount() > 0) {
+            for (int i = tableModelFine.getRowCount() - 1; i > -1; i--) {
+                tableModelFine.removeRow(i);
+            }
+        }
+        for (int i = 0; i < loggedMember.getFines().size(); i++) {
+            Object[] rowData = {loggedMember.getFines().get(i).getStartDate(), loggedMember.getFines().get(i).getEndDate(), loggedMember.getFines().get(i).getTax() + " Euros"};
+            tableModelFine.addRow(rowData);
+        }
+    }
+
+    private void fillMemberPanel() {
+        genBorrows();
+        genFines();
+        jTextFieldMemberName.setText(loggedMember.getPersonName());
+        jTextFieldMemberLastName.setText(loggedMember.getPersonLastName());
+        jTextFieldMemberAddress.setText(loggedMember.getAddress());
+        jTextFieldMemberPhone.setText(Integer.toString(loggedMember.getPhone()));
+        jTextFieldMemberPWD.setText(loggedMember.getPwd());
     }
 
     /**
@@ -59,8 +109,43 @@ enum SwitchPanel{BORROW,PREFERENCES;}
 
         bGroupFilterState = new javax.swing.ButtonGroup();
         bGroupFilterTAI = new javax.swing.ButtonGroup();
+        jSeparator2 = new javax.swing.JSeparator();
+        jMenuItem2 = new javax.swing.JMenuItem();
         mainJTabbedPanel = new javax.swing.JTabbedPane();
+        coverPanel = new javax.swing.JPanel();
         welcomePanel = new javax.swing.JPanel();
+        lblWelcomePhoto = new javax.swing.JLabel();
+        lblWelcomeLibraryName = new javax.swing.JLabel();
+        lblWelcomeLibrary = new javax.swing.JLabel();
+        jButtonRegister = new javax.swing.JButton();
+        lblWelcomeUser = new javax.swing.JLabel();
+        jButtonOpenWelcome = new javax.swing.JButton();
+        memberPanel = new javax.swing.JPanel();
+        jButtonCloseMemberPanel = new javax.swing.JButton();
+        jScrollTableBorrows = new javax.swing.JScrollPane();
+        jTableBorrows = new javax.swing.JTable();
+        jScrollTableFines = new javax.swing.JScrollPane();
+        jTableFines = new javax.swing.JTable();
+        jTextFieldMemberAddress = new javax.swing.JTextField();
+        jTextFieldMemberPhone = new javax.swing.JTextField();
+        jTextFieldMemberPWD = new javax.swing.JPasswordField();
+        jTextFieldMemberName = new javax.swing.JTextField();
+        jTextFieldMemberLastName = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jTextFieldMemberPhone1 = new javax.swing.JTextField();
+        registerPanel = new javax.swing.JPanel();
+        jButtonGoWelcome = new javax.swing.JButton();
+        jTextFieldRegisterName = new javax.swing.JTextField();
+        jTextFieldRegisterLastName = new javax.swing.JTextField();
+        jTextRegisterPWD = new javax.swing.JPasswordField();
+        jTextFieldRegisterAddress = new javax.swing.JTextField();
+        jTextFieldRegisterPhone = new javax.swing.JTextField();
+        jTextFieldRegisterUserName = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jButtonCompleteRegister = new javax.swing.JButton();
         searchAndBorrow = new javax.swing.JPanel();
         searchPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -84,6 +169,7 @@ enum SwitchPanel{BORROW,PREFERENCES;}
         jScrollPane3 = new javax.swing.JScrollPane();
         jListAuthors = new javax.swing.JList();
         jButtonBorrowRequest = new javax.swing.JButton();
+        lblBookImg = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         jTextFieldSearch = new javax.swing.JTextField();
         jRadioAll = new javax.swing.JRadioButton();
@@ -105,26 +191,444 @@ enum SwitchPanel{BORROW,PREFERENCES;}
         jButtonBackFromBorrow = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
 
+        jMenuItem2.setText("jMenuItem2");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         mainJTabbedPanel.setBackground(new java.awt.Color(102, 102, 102));
         mainJTabbedPanel.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
         mainJTabbedPanel.setMinimumSize(new java.awt.Dimension(1024, 600));
         mainJTabbedPanel.setSize(new java.awt.Dimension(1024, 600));
+        mainJTabbedPanel.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                clarLog(evt);
+            }
+        });
+
+        coverPanel.setLayout(new java.awt.CardLayout());
+
+        welcomePanel.setBackground(new java.awt.Color(230, 230, 230));
+        welcomePanel.setFocusable(false);
+
+        lblWelcomePhoto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cover.png"))); // NOI18N
+        lblWelcomePhoto.setFocusable(false);
+
+        lblWelcomeLibraryName.setFont(new java.awt.Font("American Typewriter", 1, 48)); // NOI18N
+        lblWelcomeLibraryName.setForeground(new java.awt.Color(102, 102, 102));
+        lblWelcomeLibraryName.setText("Un universo de papel");
+        lblWelcomeLibraryName.setFocusable(false);
+
+        lblWelcomeLibrary.setFont(new java.awt.Font("American Typewriter", 1, 18)); // NOI18N
+        lblWelcomeLibrary.setText("Biblioteca");
+        lblWelcomeLibrary.setFocusable(false);
+
+        jButtonRegister.setText("<html>¿Aún no eres miembro?<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Regístrate </html>");
+        jButtonRegister.setFocusable(false);
+        jButtonRegister.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonRegisterActionPerformed(evt);
+            }
+        });
+
+        lblWelcomeUser.setFont(new java.awt.Font("American Typewriter", 1, 14)); // NOI18N
+        lblWelcomeUser.setForeground(new java.awt.Color(102, 102, 102));
+        lblWelcomeUser.setText("Diseñado por José Antonio Yáñez Jiménez");
+        lblWelcomeUser.setFocusable(false);
+
+        jButtonOpenWelcome.setText("Inicia sesión");
+        jButtonOpenWelcome.setActionCommand("Login");
+        jButtonOpenWelcome.setFocusable(false);
+        jButtonOpenWelcome.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonOpenSession(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout welcomePanelLayout = new org.jdesktop.layout.GroupLayout(welcomePanel);
         welcomePanel.setLayout(welcomePanelLayout);
         welcomePanelLayout.setHorizontalGroup(
             welcomePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 1007, Short.MAX_VALUE)
+            .add(welcomePanelLayout.createSequentialGroup()
+                .addContainerGap(125, Short.MAX_VALUE)
+                .add(welcomePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(lblWelcomeLibrary)
+                    .add(lblWelcomeLibraryName))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 175, Short.MAX_VALUE)
+                .add(welcomePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(jButtonRegister, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jButtonOpenWelcome, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(12, Short.MAX_VALUE))
+            .add(welcomePanelLayout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(welcomePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(lblWelcomePhoto, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(lblWelcomeUser, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         welcomePanelLayout.setVerticalGroup(
             welcomePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 575, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, welcomePanelLayout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(welcomePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(welcomePanelLayout.createSequentialGroup()
+                        .add(lblWelcomeLibraryName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 82, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(lblWelcomeLibrary)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 22, Short.MAX_VALUE)
+                        .add(lblWelcomeUser)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(lblWelcomePhoto)
+                        .addContainerGap(12, Short.MAX_VALUE))
+                    .add(welcomePanelLayout.createSequentialGroup()
+                        .add(6, 6, 6)
+                        .add(jButtonRegister, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 40, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(6, 6, 6)
+                        .add(jButtonOpenWelcome, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
-        mainJTabbedPanel.addTab("                              Portada                              ", welcomePanel);
+        coverPanel.add(welcomePanel, "welcomeCard");
 
+        memberPanel.setBackground(new java.awt.Color(230, 230, 230));
+        memberPanel.setFocusable(false);
+
+        jButtonCloseMemberPanel.setText("Cierra sesión");
+        jButtonCloseMemberPanel.setActionCommand("Login");
+        jButtonCloseMemberPanel.setFocusable(false);
+        jButtonCloseMemberPanel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCloseSession(evt);
+            }
+        });
+
+        jScrollTableBorrows.setBackground(new java.awt.Color(230, 230, 230));
+        jScrollTableBorrows.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollTableBorrows.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        jScrollTableBorrows.setHorizontalScrollBar(null);
+
+        jTableBorrows.setModel(tableModelBorrow);
+        jTableBorrows.setFocusTraversalKeysEnabled(false);
+        jTableBorrows.setFocusable(false);
+        jTableBorrows.setGridColor(new java.awt.Color(230, 230, 230));
+        jTableBorrows.setRequestFocusEnabled(false);
+        jTableBorrows.setRowSelectionAllowed(false);
+        jTableBorrows.setShowGrid(false);
+        jScrollTableBorrows.setViewportView(jTableBorrows);
+
+        jScrollTableFines.setBackground(new java.awt.Color(230, 230, 230));
+        jScrollTableFines.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollTableFines.setHorizontalScrollBar(null);
+
+        jTableFines.setModel(tableModelFine);
+        jTableFines.setFocusTraversalKeysEnabled(false);
+        jTableFines.setFocusable(false);
+        jTableFines.setGridColor(new java.awt.Color(230, 230, 230));
+        jTableFines.setRequestFocusEnabled(false);
+        jTableFines.setRowSelectionAllowed(false);
+        jTableFines.setShowGrid(false);
+        jScrollTableFines.setViewportView(jTableFines);
+
+        jTextFieldMemberAddress.setBackground(new java.awt.Color(230, 230, 230));
+        jTextFieldMemberAddress.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldMemberAddress.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                colorToWhite(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                colorToBrightGrey(evt);
+            }
+        });
+
+        jTextFieldMemberPhone.setBackground(new java.awt.Color(230, 230, 230));
+        jTextFieldMemberPhone.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldMemberPhone.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                colorToWhite(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                colorToBrightGrey(evt);
+            }
+        });
+
+        jTextFieldMemberPWD.setBackground(new java.awt.Color(230, 230, 230));
+        jTextFieldMemberPWD.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldMemberPWD.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                PWDColorToWhite(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                PWDColorToGrey(evt);
+            }
+        });
+
+        jTextFieldMemberName.setEditable(false);
+        jTextFieldMemberName.setBackground(new java.awt.Color(230, 230, 230));
+        jTextFieldMemberName.setBorder(null);
+        jTextFieldMemberName.setFocusable(false);
+
+        jTextFieldMemberLastName.setEditable(false);
+        jTextFieldMemberLastName.setBackground(new java.awt.Color(230, 230, 230));
+        jTextFieldMemberLastName.setBorder(null);
+        jTextFieldMemberLastName.setFocusable(false);
+
+        jLabel1.setText("Histórico de sanciones");
+        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        jLabel2.setText("Préstamos actuales");
+        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        jTextFieldMemberPhone1.setBackground(new java.awt.Color(230, 230, 230));
+        jTextFieldMemberPhone1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldMemberPhone1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                colorToWhite(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                colorToBrightGrey(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout memberPanelLayout = new org.jdesktop.layout.GroupLayout(memberPanel);
+        memberPanel.setLayout(memberPanelLayout);
+        memberPanelLayout.setHorizontalGroup(
+            memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(memberPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
+                        .add(0, 806, Short.MAX_VALUE)
+                        .add(jButtonCloseMemberPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(jScrollTableBorrows)
+                    .add(jScrollTableFines)
+                    .add(memberPanelLayout.createSequentialGroup()
+                        .add(0, 0, Short.MAX_VALUE)
+                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(memberPanelLayout.createSequentialGroup()
+                                .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(jTextFieldMemberPhone1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(jTextFieldMemberAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(jTextFieldMemberName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .add(18, 18, 18)
+                                .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                    .add(jTextFieldMemberPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(jTextFieldMemberPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(jTextFieldMemberLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(memberPanelLayout.createSequentialGroup()
+                                .add(186, 186, 186)
+                                .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jLabel1)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        memberPanelLayout.setVerticalGroup(
+            memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(jButtonCloseMemberPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 92, Short.MAX_VALUE)
+                .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(memberPanelLayout.createSequentialGroup()
+                        .add(jTextFieldMemberName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(jTextFieldMemberAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(jTextFieldMemberPhone1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(memberPanelLayout.createSequentialGroup()
+                        .add(jTextFieldMemberLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(jTextFieldMemberPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(jTextFieldMemberPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 59, Short.MAX_VALUE)
+                .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jScrollTableBorrows, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 81, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(23, 23, 23)
+                .add(jLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(18, 18, 18)
+                .add(jScrollTableFines, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        coverPanel.add(memberPanel, "memberCard");
+
+        registerPanel.setBackground(new java.awt.Color(230, 230, 230));
+        registerPanel.setFocusable(false);
+
+        jButtonGoWelcome.setText("De vuelta a Bienvenida");
+        jButtonGoWelcome.setActionCommand("Login");
+        jButtonGoWelcome.setFocusable(false);
+        jButtonGoWelcome.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                goToWelcome(evt);
+            }
+        });
+
+        jTextFieldRegisterName.setBackground(new java.awt.Color(230, 230, 230));
+        jTextFieldRegisterName.setForeground(new java.awt.Color(153, 153, 153));
+        jTextFieldRegisterName.setText("Nombre...");
+        jTextFieldRegisterName.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldRegisterName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextFieldRegisterNamecolorToWhite(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextFieldRegisterNamecolorToBrightGrey(evt);
+            }
+        });
+
+        jTextFieldRegisterLastName.setBackground(new java.awt.Color(230, 230, 230));
+        jTextFieldRegisterLastName.setForeground(new java.awt.Color(153, 153, 153));
+        jTextFieldRegisterLastName.setText("Apellidos...");
+        jTextFieldRegisterLastName.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldRegisterLastName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextFieldRegisterLastNamecolorToWhite(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextFieldRegisterLastNamecolorToBrightGrey(evt);
+            }
+        });
+
+        jTextRegisterPWD.setBackground(new java.awt.Color(230, 230, 230));
+        jTextRegisterPWD.setForeground(new java.awt.Color(153, 153, 153));
+        jTextRegisterPWD.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextRegisterPWD.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextRegisterPWDPWDColorToWhite(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextRegisterPWDPWDColorToGrey(evt);
+            }
+        });
+
+        jTextFieldRegisterAddress.setEditable(false);
+        jTextFieldRegisterAddress.setBackground(new java.awt.Color(230, 230, 230));
+        jTextFieldRegisterAddress.setForeground(new java.awt.Color(153, 153, 153));
+        jTextFieldRegisterAddress.setText("Dirección...");
+        jTextFieldRegisterAddress.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldRegisterAddress.setFocusable(false);
+
+        jTextFieldRegisterPhone.setEditable(false);
+        jTextFieldRegisterPhone.setBackground(new java.awt.Color(230, 230, 230));
+        jTextFieldRegisterPhone.setForeground(new java.awt.Color(153, 153, 153));
+        jTextFieldRegisterPhone.setText("Número de telefono...");
+        jTextFieldRegisterPhone.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldRegisterPhone.setFocusable(false);
+
+        jTextFieldRegisterUserName.setBackground(new java.awt.Color(230, 230, 230));
+        jTextFieldRegisterUserName.setForeground(new java.awt.Color(153, 153, 153));
+        jTextFieldRegisterUserName.setText("Nombre de usuario...");
+        jTextFieldRegisterUserName.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldRegisterUserName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextFieldRegisterUserNamecolorToWhite(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextFieldRegisterUserNamecolorToBrightGrey(evt);
+            }
+        });
+
+        jLabel5.setText("Escribe tu nombre y apellidos");
+
+        jLabel6.setText("Escribe tu dirección y número de teléfono");
+
+        jLabel7.setText("Para finalizar, escribe un nombre de usuario y una contraseña");
+
+        jButtonCompleteRegister.setText("Completa el registro");
+        jButtonCompleteRegister.setActionCommand("Login");
+        jButtonCompleteRegister.setFocusable(false);
+        jButtonCompleteRegister.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tryRegistration(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout registerPanelLayout = new org.jdesktop.layout.GroupLayout(registerPanel);
+        registerPanel.setLayout(registerPanelLayout);
+        registerPanelLayout.setHorizontalGroup(
+            registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, registerPanelLayout.createSequentialGroup()
+                .addContainerGap(254, Short.MAX_VALUE)
+                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, registerPanelLayout.createSequentialGroup()
+                        .add(jButtonGoWelcome, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .add(registerPanelLayout.createSequentialGroup()
+                        .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(registerPanelLayout.createSequentialGroup()
+                                .add(jTextFieldRegisterAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(18, 18, 18)
+                                .add(jTextFieldRegisterPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(registerPanelLayout.createSequentialGroup()
+                                .add(jTextFieldRegisterUserName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(18, 18, 18)
+                                .add(jTextRegisterPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(259, Short.MAX_VALUE))))
+            .add(registerPanelLayout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(registerPanelLayout.createSequentialGroup()
+                        .add(jTextFieldRegisterName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(18, 18, 18)
+                        .add(jTextFieldRegisterLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(registerPanelLayout.createSequentialGroup()
+                        .add(53, 53, 53)
+                        .add(jLabel7)))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .add(registerPanelLayout.createSequentialGroup()
+                .add(0, 0, Short.MAX_VALUE)
+                .add(jLabel6)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .add(registerPanelLayout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jLabel5)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .add(registerPanelLayout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jButtonCompleteRegister, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        registerPanelLayout.setVerticalGroup(
+            registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, registerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(jButtonGoWelcome, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 69, Short.MAX_VALUE)
+                .add(jLabel5)
+                .add(18, 18, 18)
+                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jTextFieldRegisterName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jTextFieldRegisterLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(84, 84, 84)
+                .add(jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(18, 18, 18)
+                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jTextFieldRegisterAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jTextFieldRegisterPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(70, 70, 70)
+                .add(jLabel7)
+                .add(18, 18, 18)
+                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(jTextFieldRegisterUserName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jTextRegisterPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 85, Short.MAX_VALUE)
+                .add(jButtonCompleteRegister, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(33, 33, 33))
+        );
+
+        coverPanel.add(registerPanel, "registerCard");
+
+        mainJTabbedPanel.addTab("                            Bienvenida                            ", coverPanel);
+
+        searchAndBorrow.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                ClearLogFromCard(evt);
+            }
+        });
         searchAndBorrow.setLayout(new java.awt.CardLayout());
 
         searchPanel.setBackground(new java.awt.Color(230, 230, 230));
@@ -185,6 +689,10 @@ enum SwitchPanel{BORROW,PREFERENCES;}
             }
         });
 
+        lblBookImg.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Imagen", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.TOP));
+        lblBookImg.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lblBookImg.setIconTextGap(1);
+
         org.jdesktop.layout.GroupLayout jPanelCopyInfoLayout = new org.jdesktop.layout.GroupLayout(jPanelCopyInfo);
         jPanelCopyInfo.setLayout(jPanelCopyInfoLayout);
         jPanelCopyInfoLayout.setHorizontalGroup(
@@ -204,66 +712,65 @@ enum SwitchPanel{BORROW,PREFERENCES;}
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, lblEdition1))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(lblBookTitle, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(lblBookISBN, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(lblBookType, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(lblBookEditorial, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(lblBookEdition, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(18, 18, 18)
+                        .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jPanelCopyInfoLayout.createSequentialGroup()
-                                .add(lblBookTitle, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(18, 18, 18)
                                 .add(lblState)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                                 .add(lblBookState, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 123, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .add(18, 18, 18)
-                                .add(jButtonBorrowRequest, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 133, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(49, 49, 49))
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanelCopyInfoLayout.createSequentialGroup()
-                                .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(lblBookISBN, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(lblBookType, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(lblBookEditorial, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(lblBookEdition, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                                    .add(jPanelCopyInfoLayout.createSequentialGroup()
-                                        .add(6, 6, 6)
-                                        .add(jScrollPane3))
-                                    .add(jPanelCopyInfoLayout.createSequentialGroup()
-                                        .add(lblCopyCode)
-                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                        .add(lblBookCopyCode, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))))))
-                .addContainerGap())
+                                .add(jButtonBorrowRequest, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 133, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 329, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jPanelCopyInfoLayout.createSequentialGroup()
+                                .add(lblCopyCode)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(lblBookCopyCode, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 250, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(27, 27, 27)
+                        .add(lblBookImg, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 108, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(73, Short.MAX_VALUE))
         );
         jPanelCopyInfoLayout.setVerticalGroup(
             jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanelCopyInfoLayout.createSequentialGroup()
-                .add(13, 13, 13)
-                .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(lblTitle, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 21, Short.MAX_VALUE)
-                    .add(lblBookTitle, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(lblState, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(lblBookState, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButtonBorrowRequest, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                        .add(lvlISBN, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(lblBookISBN, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                        .add(lblCopyCode, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(lblBookCopyCode, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanelCopyInfoLayout.createSequentialGroup()
+                        .add(13, 13, 13)
                         .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(lblType, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(lblBookType, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(lblEditorial, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(lblBookEditorial, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(lblTitle, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 21, Short.MAX_VALUE)
+                            .add(lblBookTitle, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(lblState, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(lblBookState, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jButtonBorrowRequest, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(lblBookEdition, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(lblEdition1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                    .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(231, 231, 231)
+                            .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                .add(lvlISBN, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(lblBookISBN, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                .add(lblCopyCode, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(lblBookCopyCode, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jPanelCopyInfoLayout.createSequentialGroup()
+                                .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                    .add(lblType, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .add(lblBookType, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                    .add(lblEditorial, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .add(lblBookEditorial, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(jPanelCopyInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(lblBookEdition, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(lblEdition1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 91, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(lblBookImg, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 178, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(223, 223, 223)
                 .add(lblBookName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 47, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -273,11 +780,6 @@ enum SwitchPanel{BORROW,PREFERENCES;}
         jTextFieldSearch.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 removeSearchText(evt);
-            }
-        });
-        jTextFieldSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldSearchActionPerformed(evt);
             }
         });
         jTextFieldSearch.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -320,10 +822,6 @@ enum SwitchPanel{BORROW,PREFERENCES;}
         searchPanelLayout.setHorizontalGroup(
             searchPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(searchPanelLayout.createSequentialGroup()
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(jPanelCopyInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, Short.MAX_VALUE))
-            .add(searchPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(searchPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jSeparator1)
@@ -344,7 +842,11 @@ enum SwitchPanel{BORROW,PREFERENCES;}
                         .add(jRadioAll)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 110, Short.MAX_VALUE)
                         .add(jRadioStored)
-                        .add(0, 303, Short.MAX_VALUE)))
+                        .add(0, 303, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, searchPanelLayout.createSequentialGroup()
+                        .add(0, 0, Short.MAX_VALUE)
+                        .add(jPanelCopyInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         searchPanelLayout.setVerticalGroup(
@@ -385,8 +887,16 @@ enum SwitchPanel{BORROW,PREFERENCES;}
 
         jPanelLogin.setBackground(new java.awt.Color(222, 222, 222));
 
-        jTextFieldUser.setBackground(new java.awt.Color(204, 204, 204));
+        jTextFieldUser.setBackground(new java.awt.Color(222, 222, 222));
         jTextFieldUser.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldUser.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                colorToWhite(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                colorToGrey(evt);
+            }
+        });
 
         lblPWD.setText("Contraseña");
         lblPWD.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -394,8 +904,16 @@ enum SwitchPanel{BORROW,PREFERENCES;}
         lblUser.setText("Usuario");
         lblUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        jTextFieldPWD.setBackground(new java.awt.Color(204, 204, 204));
+        jTextFieldPWD.setBackground(new java.awt.Color(222, 222, 222));
         jTextFieldPWD.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldPWD.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                colorToWhite(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                colorToGrey(evt);
+            }
+        });
 
         jButtonLogin.setText("Aceptar");
         jButtonLogin.addActionListener(new java.awt.event.ActionListener() {
@@ -508,7 +1026,7 @@ enum SwitchPanel{BORROW,PREFERENCES;}
 
         searchAndBorrow.add(borrowPanel, "cardBorrow");
 
-        mainJTabbedPanel.addTab("                           Búsqueda                           ", searchAndBorrow);
+        mainJTabbedPanel.addTab("                             Búsqueda                             ", searchAndBorrow);
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -521,7 +1039,7 @@ enum SwitchPanel{BORROW,PREFERENCES;}
             .add(0, 575, Short.MAX_VALUE)
         );
 
-        mainJTabbedPanel.addTab("                              Administración                              ", jPanel3);
+        mainJTabbedPanel.addTab("                          Administración                          ", jPanel3);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -536,7 +1054,9 @@ enum SwitchPanel{BORROW,PREFERENCES;}
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
     private void filterByState() {
+        genModelCopies();
         stateCopies = new ArrayList();
         ArrayList<Copy> auxCopies2 = new ArrayList();
         if (jRadioStored.isSelected()) {
@@ -612,115 +1132,253 @@ enum SwitchPanel{BORROW,PREFERENCES;}
     private void displayItem(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_displayItem
         // TODO add your handling code here:
         Object a = jListCopies.getSelectedValue();
-        if (a==null)
-        {
-        lblBookTitle.setText("");
-        lblBookISBN.setText("");
-        lblBookType.setText("");
-        lblBookEditorial.setText("");
-        lblBookEdition.setText("");
-        lblBookState.setText("");
-        lblBookCopyCode.setText("");
-        modelAuthors.clear();
-        jButtonBorrowRequest.setVisible(false);
-        }
-        else
-        {
-        Copy b = (Copy) (a);
-        lblBookTitle.setText(b.getBook().getTitle());
-        lblBookISBN.setText(b.getBook().getISBN());
-        lblBookType.setText(b.getBook().getType().toString());
-        lblBookEditorial.setText(b.getBook().getEditorial());
-        lblBookEdition.setText(Integer.toString(b.getBook().getEdition()));
-        switch (b.getState()) {
-            case BORROWED:
-                lblBookState.setText("Prestado");
-                lblBookState.setForeground(Color.red);
-                jButtonBorrowRequest.setVisible(false);
-                break;
-            case STORED:
-                lblBookState.setText("Disponible");
-                lblBookState.setForeground(Color.green);
-                jButtonBorrowRequest.setVisible(true);
-                break;
-            default:
-                throw new AssertionError();
-        }
-        lblBookCopyCode.setText(Integer.toString(b.getBookCode()));
-        listAuthors = new ArrayList();
-        for (int i = 0; i < b.getBook().getAuthor().size(); i++) {
-            listAuthors.add(b.getBook().getAuthor().get(i));
-        }
-        modelAuthors.clear();
-        for (int i = 0; i < listAuthors.size(); i++) {
-            modelAuthors.addElement(listAuthors.get(i));
-        }
-        jListAuthors.setModel(modelAuthors);
+        if (a == null) {
+            lblBookTitle.setText("");
+            lblBookISBN.setText("");
+            lblBookType.setText("");
+            lblBookEditorial.setText("");
+            lblBookEdition.setText("");
+            lblBookState.setText("");
+            lblBookCopyCode.setText("");
+            modelAuthors.clear();
+            jButtonBorrowRequest.setVisible(false);
+        } else {
+            Copy b = (Copy) (a);
+            lblBookTitle.setText(b.getBook().getTitle());
+            lblBookISBN.setText(b.getBook().getISBN());
+            lblBookType.setText(b.getBook().getType().toString());
+            lblBookEditorial.setText(b.getBook().getEditorial());
+            lblBookEdition.setText(Integer.toString(b.getBook().getEdition()));
+            switch (b.getState()) {
+                case BORROWED:
+                    lblBookState.setText("Prestado");
+                    lblBookState.setForeground(Color.red);
+                    jButtonBorrowRequest.setVisible(false);
+                    break;
+                case STORED:
+                    lblBookState.setText("Disponible");
+                    lblBookState.setForeground(Color.green);
+                    jButtonBorrowRequest.setVisible(true);
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+            lblBookCopyCode.setText(Integer.toString(b.getBookCode()));
+            //System.out.println(b.getBook().getImage());
+            lblBookImg.setIcon(new ImageIcon(getClass().getResource(b.getBook().getImage())));
+            listAuthors = new ArrayList();
+            for (int i = 0; i < b.getBook().getAuthor().size(); i++) {
+                listAuthors.add(b.getBook().getAuthor().get(i));
+            }
+            modelAuthors.clear();
+            for (int i = 0; i < listAuthors.size(); i++) {
+                modelAuthors.addElement(listAuthors.get(i));
+            }
+            jListAuthors.setModel(modelAuthors);
         }
     }//GEN-LAST:event_displayItem
 
     private void jButtonBorrowRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBorrowRequestActionPerformed
         // TODO add your handling code here:
-        CardLayout cl = (CardLayout)(searchAndBorrow.getLayout());
-        if (loggedMember.getUserid()==null)
-        {
-        cl.show(searchAndBorrow, "cardLogin");
+        CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
+        if (loggedMember.getUserid() == null) {
+            cl.show(searchAndBorrow, "cardLogin");
+            mainJTabbedPanel.setTitleAt(1, "                        Acceso de usuarios                        ");
+        } else {
+            cl.show(searchAndBorrow, "cardBorrow");
+            mainJTabbedPanel.setTitleAt(1, "                       Procesar el préstamo                       ");
         }
-        else
-        {
-        cl.show(searchAndBorrow, "cardBorrow");
-        }
-        destination=SwitchPanel.BORROW;
+        destination = SwitchPanel.BORROW;
     }//GEN-LAST:event_jButtonBorrowRequestActionPerformed
 
     private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
         // TODO add your handling code here:
-        CardLayout cl = (CardLayout)(searchAndBorrow.getLayout());
+        clearLogin();
+        CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
         cl.show(searchAndBorrow, "cardSearchPanel");
+        mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
     }//GEN-LAST:event_jButtonBackActionPerformed
 
-    private void jTextFieldSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldSearchActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldSearchActionPerformed
+    private void clearLogin() {
+        jTextFieldUser.setText("");
+        lblWrongUPWD.setVisible(false);
+        jTextFieldPWD.setText("");
+        lblPWD.setForeground(new Color(0, 0, 0));
+        lblUser.setForeground(new Color(0, 0, 0));
+    }
+    
+    private void clearRegistration()
+    {
+    jTextFieldRegisterName.setText("Nombre...");
+    jTextFieldRegisterLastName.setText("Apellidos...");
+    jTextFieldRegisterAddress.setText("Dirección...");
+    jTextFieldRegisterPhone.setText("Número de teléfono...");
+    jTextFieldRegisterUserName.setText("Nombre de usuario...");
+    jTextRegisterPWD.setText("");
+    }
 
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
         // TODO add your handling code here:
-        loggedMember=new Member();
-        for (int i=0; i<listMembers.size(); i++)
-        {
-        if (jTextFieldUser.getText().equals(listMembers.get(i).getUserid()) && jTextFieldPWD.getText().equals(listMembers.get(i).getPwd()))
-        {
-        loggedMember.setPersonName(listMembers.get(i).getPersonName());
-        loggedMember.setPersonLastName(listMembers.get(i).getPersonLastName());
-        loggedMember.setPhone(listMembers.get(i).getPhone());
-        loggedMember.setAddress(listMembers.get(i).getAddress());
-        loggedMember.setMemberID(listMembers.get(i).getMemberID());
-        loggedMember.setUserid(listMembers.get(i).getUserid());
-        loggedMember.setPwd(listMembers.get(i).getPwd());
-        break;
+        loggedMember = new Member();
+        for (int i = 0; i < listMembers.size(); i++) {
+            if (jTextFieldUser.getText().equals(listMembers.get(i).getUserid()) && jTextFieldPWD.getText().equals(listMembers.get(i).getPwd())) {
+                loggedMember.setPersonName(listMembers.get(i).getPersonName());
+                loggedMember.setPersonLastName(listMembers.get(i).getPersonLastName());
+                loggedMember.setPhone(listMembers.get(i).getPhone());
+                loggedMember.setAddress(listMembers.get(i).getAddress());
+                loggedMember.setMemberID(listMembers.get(i).getMemberID());
+                loggedMember.setUserid(listMembers.get(i).getUserid());
+                loggedMember.setPwd(listMembers.get(i).getPwd());
+                loggedMember.setBorrowedCopies(listMembers.get(i).getBorrowedCopies());
+                loggedMember.setFines(listMembers.get(i).getFines());
+                break;
+            }
+
         }
-        
-        }
-        System.out.println((loggedMember.getUserid()==null));
-        if (loggedMember.getUserid()==null)
-        {
-        lblWrongUPWD.setVisible(true);
-        }
-        else
-        {
-        lblWrongUPWD.setVisible(false);
+        System.out.println((loggedMember.getUserid() == null));
+        if (loggedMember.getUserid() == null) {
+            lblWrongUPWD.setVisible(true);
+            jTextFieldPWD.setText("");
+            lblPWD.setForeground(new Color(204, 0, 0));
+            lblUser.setForeground(new Color(204, 0, 0));
+        } else {
+            CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
+            CardLayout cl2 = (CardLayout) (coverPanel.getLayout());
+            cl2.show(coverPanel, "memberCard");
+            fillMemberPanel();
+            mainJTabbedPanel.setTitleAt(0, "                         Panel de usuario                         ");
+            //lblWelcomeUser.setText("Bienvenid@ " + loggedMember.getPersonName());
             switch (destination) {
                 case BORROW:
-                            CardLayout cl = (CardLayout)(searchAndBorrow.getLayout());
-        cl.show(searchAndBorrow, "cardBorrow");
+                    cl.show(searchAndBorrow, "cardBorrow");
+                    mainJTabbedPanel.setTitleAt(1, "                       Procesar el préstamo                       ");
                     break;
                 case PREFERENCES:
+                    mainJTabbedPanel.setSelectedIndex(0);
+                    break;
+                case SEARCH:
+                    cl.show(searchAndBorrow, "cardSearchPanel");
+                    mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
                     break;
                 default:
                     throw new AssertionError();
             }
         }
     }//GEN-LAST:event_jButtonLoginActionPerformed
+
+    private void jButtonOpenSession(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenSession
+        // TODO add your handling code here:
+        CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
+        cl.show(searchAndBorrow, "cardLogin");
+        mainJTabbedPanel.setTitleAt(1, "                        Acceso de usuarios                        ");
+        mainJTabbedPanel.setSelectedIndex(1);
+        destination = SwitchPanel.PREFERENCES;
+    }//GEN-LAST:event_jButtonOpenSession
+
+    private void jButtonRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegisterActionPerformed
+        // TODO add your handling code here:
+        CardLayout cl = (CardLayout) (coverPanel.getLayout());
+        cl.show(coverPanel, "registerCard");
+        mainJTabbedPanel.setTitleAt(0, "                        Proceso de registro                       ");
+    }//GEN-LAST:event_jButtonRegisterActionPerformed
+
+    private void jButtonCloseSession(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseSession
+        // TODO add your handling code here:+
+        CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
+        CardLayout cl2 = (CardLayout) (coverPanel.getLayout());
+        loggedMember = new Member();
+        cl.show(searchAndBorrow, "cardSearchPanel");
+        mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
+
+        cl2.show(coverPanel, "welcomeCard");
+        mainJTabbedPanel.setTitleAt(0, "                            Bienvenida                            ");
+    }//GEN-LAST:event_jButtonCloseSession
+
+    private void clarLog(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_clarLog
+        // TODO add your handling code here:
+        clearLogin();
+    }//GEN-LAST:event_clarLog
+
+    private void ClearLogFromCard(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_ClearLogFromCard
+        // TODO add your handling code here:
+        clearLogin();
+    }//GEN-LAST:event_ClearLogFromCard
+    
+    private void colorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_colorToWhite
+        // TODO add your handling code here:
+        JTextField txf = (JTextField) (evt.getComponent());
+        txf.setBackground(new java.awt.Color(255, 255, 255));
+    }//GEN-LAST:event_colorToWhite
+
+    private void colorToGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_colorToGrey
+        // TODO add your handling code here:
+        JTextField txf = (JTextField) (evt.getComponent());
+        txf.setBackground(new java.awt.Color(222, 222, 222));
+    }//GEN-LAST:event_colorToGrey
+
+    private void PWDColorToGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_PWDColorToGrey
+        // TODO add your handling code here:
+        JPasswordField txf = (JPasswordField) (evt.getComponent());
+        txf.setBackground(new java.awt.Color(230, 230, 230));
+        txf.setEchoChar('•');
+    }//GEN-LAST:event_PWDColorToGrey
+
+    private void PWDColorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_PWDColorToWhite
+        // TODO add your handling code here:
+        JPasswordField txf = (JPasswordField) (evt.getComponent());
+        txf.setBackground(new java.awt.Color(255, 255, 255));
+        txf.setEchoChar((char) 0);
+    }//GEN-LAST:event_PWDColorToWhite
+
+    private void colorToBrightGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_colorToBrightGrey
+        // TODO add your handling code here:
+        JTextField txf = (JTextField) (evt.getComponent());
+        txf.setBackground(new java.awt.Color(230, 230, 230));
+    }//GEN-LAST:event_colorToBrightGrey
+
+    private void goToWelcome(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goToWelcome
+        // TODO add your handling code here:
+        clearRegistration();
+        CardLayout cl = (CardLayout) (coverPanel.getLayout());
+        cl.show(coverPanel, "welcomeCard");
+        mainJTabbedPanel.setTitleAt(0, "                            Bienvenida                            ");
+    }//GEN-LAST:event_goToWelcome
+
+    private void jTextFieldRegisterNamecolorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldRegisterNamecolorToWhite
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldRegisterNamecolorToWhite
+
+    private void jTextFieldRegisterNamecolorToBrightGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldRegisterNamecolorToBrightGrey
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldRegisterNamecolorToBrightGrey
+
+    private void jTextFieldRegisterLastNamecolorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldRegisterLastNamecolorToWhite
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldRegisterLastNamecolorToWhite
+
+    private void jTextFieldRegisterLastNamecolorToBrightGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldRegisterLastNamecolorToBrightGrey
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldRegisterLastNamecolorToBrightGrey
+
+    private void jTextRegisterPWDPWDColorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextRegisterPWDPWDColorToWhite
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextRegisterPWDPWDColorToWhite
+
+    private void jTextRegisterPWDPWDColorToGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextRegisterPWDPWDColorToGrey
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextRegisterPWDPWDColorToGrey
+
+    private void jTextFieldRegisterUserNamecolorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldRegisterUserNamecolorToWhite
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldRegisterUserNamecolorToWhite
+
+    private void jTextFieldRegisterUserNamecolorToBrightGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldRegisterUserNamecolorToBrightGrey
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldRegisterUserNamecolorToBrightGrey
+
+    private void tryRegistration(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tryRegistration
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tryRegistration
 
     /**
      * @param args the command line arguments
@@ -764,17 +1422,30 @@ enum SwitchPanel{BORROW,PREFERENCES;}
                 new LibraryMain().setVisible(true);
             }
         });
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bGroupFilterState;
     private javax.swing.ButtonGroup bGroupFilterTAI;
     private javax.swing.JPanel borrowPanel;
+    private javax.swing.JPanel coverPanel;
     private javax.swing.JButton jButtonBack;
     private javax.swing.JButton jButtonBackFromBorrow;
     private javax.swing.JButton jButtonBorrowRequest;
+    private javax.swing.JButton jButtonCloseMemberPanel;
+    private javax.swing.JButton jButtonCompleteRegister;
+    private javax.swing.JButton jButtonGoWelcome;
     private javax.swing.JButton jButtonLogin;
+    private javax.swing.JButton jButtonOpenWelcome;
+    private javax.swing.JButton jButtonRegister;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JList jListAuthors;
     private javax.swing.JList jListCopies;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanelCopyInfo;
     private javax.swing.JPanel jPanelLogin;
@@ -785,15 +1456,33 @@ enum SwitchPanel{BORROW,PREFERENCES;}
     private javax.swing.JRadioButton jRadioStored;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollTableBorrows;
+    private javax.swing.JScrollPane jScrollTableFines;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTabbedPane jTabbedPaneLogin;
+    private javax.swing.JTable jTableBorrows;
+    private javax.swing.JTable jTableFines;
+    private javax.swing.JTextField jTextFieldMemberAddress;
+    private javax.swing.JTextField jTextFieldMemberLastName;
+    private javax.swing.JTextField jTextFieldMemberName;
+    private javax.swing.JTextField jTextFieldMemberPWD;
+    private javax.swing.JTextField jTextFieldMemberPhone;
+    private javax.swing.JTextField jTextFieldMemberPhone1;
     private javax.swing.JTextField jTextFieldPWD;
+    private javax.swing.JTextField jTextFieldRegisterAddress;
+    private javax.swing.JTextField jTextFieldRegisterLastName;
+    private javax.swing.JTextField jTextFieldRegisterName;
+    private javax.swing.JTextField jTextFieldRegisterPhone;
+    private javax.swing.JTextField jTextFieldRegisterUserName;
     private javax.swing.JTextField jTextFieldSearch;
     private javax.swing.JTextField jTextFieldUser;
+    private javax.swing.JTextField jTextRegisterPWD;
     private javax.swing.JLabel lblBookCopyCode;
     private javax.swing.JLabel lblBookEdition;
     private javax.swing.JLabel lblBookEditorial;
     private javax.swing.JLabel lblBookISBN;
+    private javax.swing.JLabel lblBookImg;
     private javax.swing.JLabel lblBookName;
     private javax.swing.JLabel lblBookState;
     private javax.swing.JLabel lblBookTitle;
@@ -806,21 +1495,39 @@ enum SwitchPanel{BORROW,PREFERENCES;}
     private javax.swing.JLabel lblTitle;
     private javax.swing.JLabel lblType;
     private javax.swing.JLabel lblUser;
+    private javax.swing.JLabel lblWelcomeLibrary;
+    private javax.swing.JLabel lblWelcomeLibraryName;
+    private javax.swing.JLabel lblWelcomePhoto;
+    private javax.swing.JLabel lblWelcomeUser;
     private javax.swing.JLabel lblWrongUPWD;
     private javax.swing.JPanel loginPanel;
     private javax.swing.JLabel lvlISBN;
     private javax.swing.JTabbedPane mainJTabbedPanel;
+    private javax.swing.JPanel memberPanel;
+    private javax.swing.JPanel registerPanel;
     private javax.swing.JPanel searchAndBorrow;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JPanel welcomePanel;
     // End of variables declaration//GEN-END:variables
-    
+    DefaultTableModel tableModelBorrow = new DefaultTableModel(new Object[]{"Copia prestada", "Fecha de registro", "Fecha límite de entrega"}, 3) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+    DefaultTableModel tableModelFine = new DefaultTableModel(new Object[]{"Fecha de imposición", "Fecha de expiración", "Impuesto"}, 3) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+    //private DefaultTableModel tableModelBorrow = new DefaultTableModel(new Object[]{"Copia prestada", "Fecha de registro", "Fecha límite"}, 3);
     ArrayList<Author> listAuthors;
     ArrayList<Copy> listCopies;
     ArrayList<Member> listMembers;
-    Member loggedMember=new Member();
+    Member loggedMember = new Member();
     ArrayList<Copy> stateCopies = new ArrayList();
-    SwitchPanel destination;
+    SwitchPanel destination = SwitchPanel.SEARCH;
     javax.swing.DefaultListModel<Copy> modelCopies = new javax.swing.DefaultListModel<>();
     javax.swing.DefaultListModel<Author> modelAuthors = new javax.swing.DefaultListModel<>();
 }
