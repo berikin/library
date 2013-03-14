@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-To change this template, choose Tools | Templates
-and open the template in the editor.
+*************************************************
+EJEMPLO DE LIBRO
+*************************************************
+        <book>
+            <isbn>978-84-9908-405-3</isbn>
+            <title>Recuerdos del futuro</title>
+            <originaltitle>Flashforward</originaltitle>
+            <type>NOVELA</type>
+            <editorial>La factoria de ideas</editorial>
+            <edition>1</edition>
+            <year>2010</year>
+            <author>0</author>
+            <img>/img/FlashForWard.jpg</img>
+        </book>
 -->
 <DBbooks>
     <books>

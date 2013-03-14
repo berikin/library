@@ -101,7 +101,7 @@ public class LibraryMain extends javax.swing.JFrame {
             }
         }
         for (int i = 0; i < loggedMember.getFines().size(); i++) {
-            Object[] rowData = {loggedMember.getFines().get(i).getStartDate(), loggedMember.getFines().get(i).getEndDate(), loggedMember.getFines().get(i).getTax() + " Euros"};
+            Object[] rowData = {loggedMember.getFines().get(i).getStartDate().getLongFormat(), loggedMember.getFines().get(i).getEndDate().getLongFormat(), loggedMember.getFines().get(i).getTax() + " Euros"};
             tableModelFine.addRow(rowData);
         }
     }
@@ -116,19 +116,54 @@ public class LibraryMain extends javax.swing.JFrame {
         jTextFieldMemberPWD.setText(loggedMember.getPwd());
     }
 
-    private void fillborrow() {
+    private void fillBorrow() {
         Date a = new Date();
-        GregorianCalendar d = new GregorianCalendar(a.get(2), a.get(1), a.get(0));
+        GregorianCalendar d = new GregorianCalendar(a.get(2), (a.get(1) - 1), a.get(0));
         d.add(Calendar.DAY_OF_YEAR, 18);
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Date expirationDate = new Date(dateFormat.format(d.getTime()));
         lblBorrowStartDate.setText(a.getLongFormat());
         lblBorrowEndDate.setText(expirationDate.getLongFormat());
-
+        if (validateReachBorrows() || validateFines()) {
+            if (validateReachBorrows()) {
+                lblBorrowMaxReached.setVisible(true);
+                jButtonBorrow.setEnabled(false);
+            }
+            if (validateFines()) {
+                lblBorrowFine.setVisible(true);
+                jButtonBorrow.setEnabled(false);
+            }
+        } else {
+            lblBorrowMaxReached.setVisible(false);
+            lblBorrowFine.setVisible(false);
+            jButtonBorrow.setEnabled(true);
+        }
     }
 // </editor-fold> 
 //**********************************************************************************************************************
 //**********************************************************************************************************************
+
+    private boolean validateReachBorrows() {
+        if (loggedMember.getBorrowedCopies().size() == 4) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean validateFines() {
+        if (!loggedMember.getFines().isEmpty()) {
+            Date today = new Date();
+            Date fine = loggedMember.getFines().get((loggedMember.getFines().size()) - 1).getEndDate();
+            //System.out.println(today.getLongFormat());
+            //System.out.println(fine.getLongFormat());
+            int check = today.compareTo(fine);
+            //System.out.println(check);
+            if (check <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 //**********************************************************************************************************************
 //**********************************************************************************************************************
@@ -155,7 +190,6 @@ public class LibraryMain extends javax.swing.JFrame {
     }
 
     private void makeLogin() {
-        System.out.println(loggedMember.getBorrowedCopies().size());
         CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
         CardLayout cl2 = (CardLayout) (coverPanel.getLayout());
         cl2.show(coverPanel, "memberCard");
@@ -164,6 +198,7 @@ public class LibraryMain extends javax.swing.JFrame {
         //lblWelcomeUser.setText("Bienvenid@ " + loggedMember.getPersonName());
         switch (destination) {
             case BORROW:
+                fillBorrow();
                 cl.show(searchAndBorrow, "cardBorrow");
                 mainJTabbedPanel.setTitleAt(1, "                       Procesar el préstamo                       ");
                 break;
@@ -171,6 +206,7 @@ public class LibraryMain extends javax.swing.JFrame {
                 cl.show(searchAndBorrow, "cardSearchPanel");
                 mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
                 mainJTabbedPanel.setSelectedIndex(0);
+                memberPanel.requestFocus();
                 break;
             case SEARCH:
                 cl.show(searchAndBorrow, "cardSearchPanel");
@@ -339,6 +375,10 @@ public class LibraryMain extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jTextFieldMemberPhone1 = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
         registerPanel = new javax.swing.JPanel();
         jButtonGoWelcome = new javax.swing.JButton();
         jTextFieldRegisterName = new javax.swing.JTextField();
@@ -403,6 +443,8 @@ public class LibraryMain extends javax.swing.JFrame {
         lblBorrowStartDate = new javax.swing.JLabel();
         lblBorrowEndDate = new javax.swing.JLabel();
         jButtonBorrow = new javax.swing.JButton();
+        lblBorrowMaxReached = new javax.swing.JLabel();
+        lblBorrowFine = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
 
         jMenuItem2.setText("jMenuItem2");
@@ -602,6 +644,14 @@ public class LibraryMain extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setText("Dirección");
+
+        jLabel4.setText("Teléfono");
+
+        jLabel8.setText("Usuario");
+
+        jLabel9.setText("Clave");
+
         org.jdesktop.layout.GroupLayout memberPanelLayout = new org.jdesktop.layout.GroupLayout(memberPanel);
         memberPanel.setLayout(memberPanelLayout);
         memberPanelLayout.setHorizontalGroup(
@@ -610,27 +660,37 @@ public class LibraryMain extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
-                        .add(0, 806, Short.MAX_VALUE)
+                        .add(0, 800, Short.MAX_VALUE)
                         .add(jButtonCloseMemberPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jScrollTableBorrows)
                     .add(jScrollTableFines)
-                    .add(memberPanelLayout.createSequentialGroup()
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
                         .add(0, 0, Short.MAX_VALUE)
                         .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(memberPanelLayout.createSequentialGroup()
-                                .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(jTextFieldMemberPhone1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(jTextFieldMemberAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(jTextFieldMemberName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                                .add(18, 18, 18)
-                                .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                                    .add(jTextFieldMemberPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(jTextFieldMemberPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(jTextFieldMemberLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                            .add(memberPanelLayout.createSequentialGroup()
-                                .add(186, 186, 186)
-                                .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(jLabel1))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel3)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel8))
+                        .add(18, 18, 18)
+                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jTextFieldMemberPhone1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jTextFieldMemberAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jTextFieldMemberName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(18, 18, 18)
+                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(jTextFieldMemberPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jTextFieldMemberPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jTextFieldMemberLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jLabel4)
+                            .add(jLabel9))
+                        .add(0, 0, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
+                        .add(0, 0, Short.MAX_VALUE)
+                        .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(memberPanelLayout.createSequentialGroup()
+                        .add(0, 0, Short.MAX_VALUE)
+                        .add(jLabel1)
                         .add(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -639,27 +699,35 @@ public class LibraryMain extends javax.swing.JFrame {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(jButtonCloseMemberPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 92, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 93, Short.MAX_VALUE)
                 .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(memberPanelLayout.createSequentialGroup()
                         .add(jTextFieldMemberName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(jTextFieldMemberAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(jTextFieldMemberAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jLabel3))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(jTextFieldMemberPhone1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(jTextFieldMemberPhone1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jLabel8)))
                     .add(memberPanelLayout.createSequentialGroup()
                         .add(jTextFieldMemberLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(jTextFieldMemberPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(jTextFieldMemberPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jLabel4))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(jTextFieldMemberPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 59, Short.MAX_VALUE)
+                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(jTextFieldMemberPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jLabel9))))
+                .add(58, 58, 58)
                 .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jScrollTableBorrows, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 81, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(23, 23, 23)
+                .add(29, 29, 29)
                 .add(jLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(18, 18, 18)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jScrollTableFines, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -843,34 +911,8 @@ public class LibraryMain extends javax.swing.JFrame {
         registerPanelLayout.setHorizontalGroup(
             registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(registerPanelLayout.createSequentialGroup()
-                .add(0, 0, Short.MAX_VALUE)
-                .add(jLabel6)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .add(registerPanelLayout.createSequentialGroup()
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(registerPanelLayout.createSequentialGroup()
-                        .add(jTextFieldRegisterName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(18, 18, 18)
-                        .add(jTextFieldRegisterLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(registerPanelLayout.createSequentialGroup()
-                        .add(53, 53, 53)
-                        .add(jLabel7))
-                    .add(jLabel5)
-                    .add(registerPanelLayout.createSequentialGroup()
-                        .add(150, 150, 150)
-                        .add(jButtonCompleteRegister, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(lblFailedName, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .add(registerPanelLayout.createSequentialGroup()
                 .addContainerGap(254, Short.MAX_VALUE)
                 .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(lblFailedUserName, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 753, Short.MAX_VALUE)
-                    .add(registerPanelLayout.createSequentialGroup()
-                        .add(lblFailedAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(18, 18, 18)
-                        .add(lblFailedPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 353, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(0, 0, Short.MAX_VALUE))
                     .add(registerPanelLayout.createSequentialGroup()
                         .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, registerPanelLayout.createSequentialGroup()
@@ -885,9 +927,30 @@ public class LibraryMain extends javax.swing.JFrame {
                                     .add(registerPanelLayout.createSequentialGroup()
                                         .add(jTextFieldRegisterUserName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                         .add(18, 18, 18)
-                                        .add(jTextRegisterPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                                        .add(jTextRegisterPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                    .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                        .add(registerPanelLayout.createSequentialGroup()
+                                            .add(jTextFieldRegisterName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                            .add(18, 18, 18)
+                                            .add(jTextFieldRegisterLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                        .add(jLabel5)
+                                        .add(lblFailedName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 494, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                    .add(jLabel6))
                                 .add(0, 253, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                        .addContainerGap())
+                    .add(registerPanelLayout.createSequentialGroup()
+                        .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 396, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(registerPanelLayout.createSequentialGroup()
+                                .add(lblFailedAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(18, 18, 18)
+                                .add(lblFailedPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 353, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(lblFailedUserName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(0, 0, Short.MAX_VALUE))))
+            .add(registerPanelLayout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jButtonCompleteRegister, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, Short.MAX_VALUE))
         );
         registerPanelLayout.setVerticalGroup(
             registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -902,9 +965,9 @@ public class LibraryMain extends javax.swing.JFrame {
                     .add(jTextFieldRegisterLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(lblFailedName)
-                .add(56, 56, 56)
+                .add(46, 46, 46)
                 .add(jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(18, 18, 18)
+                .add(28, 28, 28)
                 .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jTextFieldRegisterAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jTextFieldRegisterPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -920,9 +983,9 @@ public class LibraryMain extends javax.swing.JFrame {
                     .add(jTextRegisterPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(lblFailedUserName)
-                .add(59, 59, 59)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 48, Short.MAX_VALUE)
                 .add(jButtonCompleteRegister, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .add(42, 42, 42))
         );
 
         coverPanel.add(registerPanel, "registerCard");
@@ -1323,6 +1386,16 @@ public class LibraryMain extends javax.swing.JFrame {
             }
         });
 
+        lblBorrowMaxReached.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lblBorrowMaxReached.setForeground(new java.awt.Color(102, 102, 0));
+        lblBorrowMaxReached.setText("<html>Lamentablemente ya has alcanzado tu límite de préstamos.<br>Devuelve un libro para poder procesar el préstamo</html>");
+        lblBorrowMaxReached.setVisible(false);
+
+        lblBorrowFine.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lblBorrowFine.setForeground(new java.awt.Color(153, 0, 0));
+        lblBorrowFine.setText("<html>Actualmente estás siendo sancionado debido a un retraso en tu devolución de préstamos.<br>Consulta tu panel de usuario para obtener más información</html>");
+        lblBorrowFine.setVisible(false);
+
         org.jdesktop.layout.GroupLayout borrowPanelLayout = new org.jdesktop.layout.GroupLayout(borrowPanel);
         borrowPanel.setLayout(borrowPanelLayout);
         borrowPanelLayout.setHorizontalGroup(
@@ -1346,11 +1419,21 @@ public class LibraryMain extends javax.swing.JFrame {
                 .add(0, 351, Short.MAX_VALUE)
                 .add(jButtonBorrow, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 305, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(351, Short.MAX_VALUE))
+            .add(borrowPanelLayout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(borrowPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(lblBorrowFine, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(lblBorrowMaxReached, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         borrowPanelLayout.setVerticalGroup(
             borrowPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, borrowPanelLayout.createSequentialGroup()
-                .addContainerGap(259, Short.MAX_VALUE)
+                .addContainerGap(84, Short.MAX_VALUE)
+                .add(lblBorrowMaxReached, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(31, 31, 31)
+                .add(lblBorrowFine, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(92, 92, 92)
                 .add(borrowPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(lblDateOneDesc)
                     .add(lblBorrowStartDate))
@@ -1358,9 +1441,9 @@ public class LibraryMain extends javax.swing.JFrame {
                 .add(borrowPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(lblDateTwoDesc)
                     .add(lblBorrowEndDate))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 77, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 69, Short.MAX_VALUE)
                 .add(jButtonBorrow, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 92, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 44, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 36, Short.MAX_VALUE)
                 .add(jButtonBackFromBorrow, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 37, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1395,7 +1478,7 @@ public class LibraryMain extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
     //**********************************************************************************************************************
     //**********************************************************************************************************************
     // <editor-fold defaultstate="collapsed" desc="// SEARCH CARD METHODS">   
@@ -1476,7 +1559,7 @@ public class LibraryMain extends javax.swing.JFrame {
             cl.show(searchAndBorrow, "cardLogin");
             mainJTabbedPanel.setTitleAt(1, "                        Acceso de usuarios                        ");
         } else {
-            fillborrow();
+            fillBorrow();
             cl.show(searchAndBorrow, "cardBorrow");
             mainJTabbedPanel.setTitleAt(1, "                       Procesar el préstamo                       ");
         }
@@ -1485,7 +1568,7 @@ public class LibraryMain extends javax.swing.JFrame {
     // </editor-fold> 
     //**********************************************************************************************************************
     //**********************************************************************************************************************
-    
+
     private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
         // TODO add your handling code here:
         clearLogin();
@@ -1497,6 +1580,7 @@ public class LibraryMain extends javax.swing.JFrame {
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
         // TODO add your handling code here:
         loggedMember = new Member();
+        genMembers();
         for (int i = 0; i < listMembers.size(); i++) {
             if (jTextFieldUser.getText().equals(listMembers.get(i).getUserid()) && jTextFieldPWD.getText().equals(listMembers.get(i).getPwd())) {
                 loggedMember = new Member(listMembers.get(i));
@@ -1504,7 +1588,6 @@ public class LibraryMain extends javax.swing.JFrame {
             }
 
         }
-        System.out.println((loggedMember.getUserid() == null));
         if (loggedMember.getUserid() == null) {
             lblWrongUPWD.setVisible(true);
             jTextFieldPWD.setText("");
@@ -1512,6 +1595,7 @@ public class LibraryMain extends javax.swing.JFrame {
             lblUser.setForeground(new Color(204, 0, 0));
         } else {
             makeLogin();
+            validateFines();
         }
     }//GEN-LAST:event_jButtonLoginActionPerformed
 
@@ -1673,7 +1757,7 @@ public class LibraryMain extends javax.swing.JFrame {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         Date startDate = new Date();
-        GregorianCalendar d = new GregorianCalendar(startDate.get(2), startDate.get(1), startDate.get(0));
+        GregorianCalendar d = new GregorianCalendar(startDate.get(2), (startDate.get(1) - 1), startDate.get(0));
         //d.add(Calendar.DAY_OF_YEAR, 18);
         //d.add(Calendar.DATE, 18);
         d.add(Calendar.DAY_OF_MONTH, 18);
@@ -1720,6 +1804,7 @@ public class LibraryMain extends javax.swing.JFrame {
         cl.show(searchAndBorrow, "cardSearchPanel");
         mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
         mainJTabbedPanel.setSelectedIndex(0);
+        memberPanel.requestFocus();
     }//GEN-LAST:event_jButtonBorrowActionPerformed
     // </editor-fold> 
     //**********************************************************************************************************************
@@ -1788,9 +1873,13 @@ public class LibraryMain extends javax.swing.JFrame {
     private javax.swing.JButton jButtonRegister;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JList jListAuthors;
     private javax.swing.JList jListCopies;
     private javax.swing.JMenuItem jMenuItem2;
@@ -1836,6 +1925,8 @@ public class LibraryMain extends javax.swing.JFrame {
     private javax.swing.JLabel lblBookTitle;
     private javax.swing.JLabel lblBookType;
     private javax.swing.JLabel lblBorrowEndDate;
+    private javax.swing.JLabel lblBorrowFine;
+    private javax.swing.JLabel lblBorrowMaxReached;
     private javax.swing.JLabel lblBorrowStartDate;
     private javax.swing.JLabel lblCopyCode;
     private javax.swing.JLabel lblDateOneDesc;
