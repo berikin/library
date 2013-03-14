@@ -1,20 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 To change this template, choose Tools | Templates
 and open the template in the editor.
--->
-<DBmembers>
-    <members>
-        <member>
-            <id>1</id>
-            <name>Pepe</name>
-            <lastname>Perez</lastname>
-            <address>Calle Falsa 1 2 3</address>
-            <phone>555122321</phone>
-            <finelist>1</finelist>
-            <borrows>1,2</borrows>
-            <userid>pepe</userid>
-            <pwd>1234</pwd>
-        </member>
-    </members>
+--><DBmembers>
+    <member>
+        <id>0</id>
+        <name>Pepe</name>
+        <lastname>Perez</lastname>
+        <address>Calle Falsa 1 2 3</address>
+        <phone>555122321</phone>
+        <finelist>1</finelist>
+        <borrows>1</borrows>
+        <userid>pepe</userid>
+        <pwd>1234</pwd>
+    </member>
 </DBmembers>

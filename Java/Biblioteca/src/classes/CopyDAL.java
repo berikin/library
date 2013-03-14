@@ -14,6 +14,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import javax.swing.JOptionPane;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.DOMException;
 
 /**
  *
@@ -24,6 +31,59 @@ public class CopyDAL {
     private static String getNodeValue(String strTag, Element eCopy) {
         Node nValue = (Node) eCopy.getElementsByTagName(strTag).item(0).getFirstChild();
         return nValue.getNodeValue();
+    }
+
+    public static void changeCopyState(int copyID, String state) {
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(new File("db/DBcopies.xml"));
+            doc.getDocumentElement().normalize();
+            int myItem = 0;
+            NodeList copyNodes = doc.getElementsByTagName("copy");
+            for (int i = 0; i < copyNodes.getLength(); i++) {
+                Element a = (Element) copyNodes.item(i);
+                if (Integer.parseInt(getNodeValue("bookcode", a)) == copyID) {
+                    myItem = i;
+                    break;
+                }
+            }
+            Node copy = doc.getElementsByTagName("copy").item(myItem);
+
+            NodeList list = copy.getChildNodes();
+
+            for (int i = 0; i < list.getLength(); i++) {
+
+                Node node = list.item(i);
+
+                // get the salary element, and update the value
+                if ("state".equals(node.getNodeName())) {
+                    switch (state) {
+                        case "STORED":
+                            node.setTextContent("STORED");
+                            break;
+                        case "BORROWED":
+                            node.setTextContent("BORROWED");
+                            break;
+                        default:
+                            throw new AssertionError();
+                    }
+                }
+
+            }
+
+            // write the content into xml file
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new File("db/DBcopies.xml"));
+            transformer.transform(source, result);
+
+            System.out.println("Done");
+
+        } catch (ParserConfigurationException | SAXException | IOException | NumberFormatException | DOMException | AssertionError | TransformerFactoryConfigurationError | TransformerException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public ArrayList<Copy> getCopies() {

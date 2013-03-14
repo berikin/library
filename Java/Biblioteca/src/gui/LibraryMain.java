@@ -4,16 +4,26 @@
  */
 package gui;
 
+//**********************************************************************************************************************
+//**********************************************************************************************************************
+// <editor-fold defaultstate="collapsed" desc="// IMPORTS">   
 import classes.Author;
+import classes.Borrow;
+import classes.BorrowDAL;
 import classes.Copy;
 import static classes.Copy.CopyState.BORROWED;
 import static classes.Copy.CopyState.STORED;
 import classes.CopyDAL;
+import classes.Fine;
 import classes.Member;
 import classes.MemberDAL;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -22,6 +32,10 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
+import util.Date;
+// </editor-fold> 
+//**********************************************************************************************************************
+//**********************************************************************************************************************
 
 /**
  *
@@ -35,19 +49,18 @@ public class LibraryMain extends javax.swing.JFrame {
     public LibraryMain() {
         genModelCopies();
         genMembers();
+        genBorrows();
         initComponents();
         this.setLocationRelativeTo(null);
     }
-
-    enum SwitchPanel {
-
-        BORROW, PREFERENCES, SEARCH;
-    }
+//**********************************************************************************************************************
+//**********************************************************************************************************************
+// <editor-fold defaultstate="collapsed" desc="// GENERATORS MODELCOPIES/MEMBERS/BORROWS/USERBORROWS/FINES/USERFINES & FILLERS FOR USERPANEL">   
 
     private void genModelCopies() {
         CopyDAL objCopyDAL = new CopyDAL();
         listCopies = objCopyDAL.getCopies();
-
+        modelCopies.clear();
         for (int i = 0; i < listCopies.size(); i++) {
             modelCopies.addElement(listCopies.get(i));
         }
@@ -59,6 +72,11 @@ public class LibraryMain extends javax.swing.JFrame {
     }
 
     private void genBorrows() {
+        BorrowDAL objBorrowDAL = new BorrowDAL();
+        listBorrows = objBorrowDAL.getBorrows();
+    }
+
+    private void genUserBorrows() {
         //GregorianCalendar d = new GregorianCalendar();
         if (tableModelBorrow.getRowCount() > 0) {
             for (int i = tableModelBorrow.getRowCount() - 1; i > -1; i--) {
@@ -89,7 +107,7 @@ public class LibraryMain extends javax.swing.JFrame {
     }
 
     private void fillMemberPanel() {
-        genBorrows();
+        genUserBorrows();
         genFines();
         jTextFieldMemberName.setText(loggedMember.getPersonName());
         jTextFieldMemberLastName.setText(loggedMember.getPersonLastName());
@@ -97,6 +115,193 @@ public class LibraryMain extends javax.swing.JFrame {
         jTextFieldMemberPhone.setText(Integer.toString(loggedMember.getPhone()));
         jTextFieldMemberPWD.setText(loggedMember.getPwd());
     }
+
+    private void fillborrow() {
+        Date a = new Date();
+        GregorianCalendar d = new GregorianCalendar(a.get(2), a.get(1), a.get(0));
+        d.add(Calendar.DAY_OF_YEAR, 18);
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date expirationDate = new Date(dateFormat.format(d.getTime()));
+        lblBorrowStartDate.setText(a.getLongFormat());
+        lblBorrowEndDate.setText(expirationDate.getLongFormat());
+
+    }
+// </editor-fold> 
+//**********************************************************************************************************************
+//**********************************************************************************************************************
+
+//**********************************************************************************************************************
+//**********************************************************************************************************************
+// <editor-fold defaultstate="collapsed" desc="// CLEAR FOR LOGIN & REGISTRATION PANELS/ MAKE LOGIN">   
+    private void clearLogin() {
+        jTextFieldUser.setText("");
+        lblWrongUPWD.setVisible(false);
+        jTextFieldPWD.setText("");
+        lblPWD.setForeground(new Color(0, 0, 0));
+        lblUser.setForeground(new Color(0, 0, 0));
+    }
+
+    private void clearRegistration() {
+        jTextFieldRegisterName.setText("Nombre...");
+        jTextFieldRegisterLastName.setText("Apellidos...");
+        jTextFieldRegisterAddress.setText("Dirección...");
+        jTextFieldRegisterPhone.setText("Número de teléfono...");
+        jTextFieldRegisterUserName.setText("Nombre de usuario...");
+        jTextRegisterPWD.setText("");
+        lblFailedName.setVisible(false);
+        lblFailedAddress.setVisible(false);
+        lblFailedPhone.setVisible(false);
+        lblFailedUserName.setVisible(false);
+    }
+
+    private void makeLogin() {
+        System.out.println(loggedMember.getBorrowedCopies().size());
+        CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
+        CardLayout cl2 = (CardLayout) (coverPanel.getLayout());
+        cl2.show(coverPanel, "memberCard");
+        fillMemberPanel();
+        mainJTabbedPanel.setTitleAt(0, "                         Panel de usuario                         ");
+        //lblWelcomeUser.setText("Bienvenid@ " + loggedMember.getPersonName());
+        switch (destination) {
+            case BORROW:
+                cl.show(searchAndBorrow, "cardBorrow");
+                mainJTabbedPanel.setTitleAt(1, "                       Procesar el préstamo                       ");
+                break;
+            case PREFERENCES:
+                cl.show(searchAndBorrow, "cardSearchPanel");
+                mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
+                mainJTabbedPanel.setSelectedIndex(0);
+                break;
+            case SEARCH:
+                cl.show(searchAndBorrow, "cardSearchPanel");
+                mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+// </editor-fold> 
+//**********************************************************************************************************************
+//**********************************************************************************************************************
+
+//**********************************************************************************************************************
+//**********************************************************************************************************************
+// <editor-fold defaultstate="collapsed" desc="// FILTERS (BY STATE & TITLE/AUTHOR/ISBN)">   
+    private void filterByState() {
+        genModelCopies();
+        stateCopies = new ArrayList();
+        ArrayList<Copy> auxCopies2 = new ArrayList();
+        if (jRadioStored.isSelected()) {
+            for (int i = 0; i < listCopies.size(); i++) {
+                if (listCopies.get(i).getState().equals(Copy.CopyState.STORED)) {
+                    stateCopies.add(listCopies.get(i));
+                }
+            }
+        } else {
+            for (int i = 0; i < listCopies.size(); i++) {
+                stateCopies.add(listCopies.get(i));
+            }
+        }
+        modelCopies.clear();
+        if (!jTextFieldSearch.getText().equals("") && !jTextFieldSearch.getText().startsWith("Introduce tu búsqueda...")) {
+            auxCopies2 = filterByTAI(listCopies);
+            for (int i = 0; i < auxCopies2.size(); i++) {
+                modelCopies.addElement(auxCopies2.get(i));
+            }
+        } else {
+            for (int i = 0; i < stateCopies.size(); i++) {
+                modelCopies.addElement(stateCopies.get(i));
+            }
+        }
+    }
+
+    private ArrayList<Copy> filterByTAI(ArrayList<Copy> auxCopies) {
+        ArrayList<Copy> auxCopies2 = new ArrayList();
+        String auxText = jTextFieldSearch.getText().toLowerCase();
+        if (jRadioByTitle.isSelected()) {
+            for (int i = 0; i < auxCopies.size(); i++) {
+                if (auxCopies.get(i).getBook().getTitle().toLowerCase().contains(auxText)) {
+                    auxCopies2.add(auxCopies.get(i));
+                }
+            }
+        } else if (jRadioByAuthor.isSelected()) {
+            for (int i = 0; i < auxCopies.size(); i++) {
+                for (int j = 0; j < auxCopies.get(i).getBook().getAuthor().size(); j++) {
+                    if (auxCopies.get(i).getBook().getAuthor().get(j).getName().toLowerCase().contains(auxText) || auxCopies.get(i).getBook().getAuthor().get(j).getLastname().toLowerCase().contains(auxText)) {
+                        auxCopies2.add(auxCopies.get(i));
+                    }
+                }
+            }
+        } else if (jRadioByISBN.isSelected()) {
+            for (int i = 0; i < auxCopies.size(); i++) {
+                if (auxCopies.get(i).getBook().getISBN().toLowerCase().startsWith(auxText)) {
+                    auxCopies2.add(auxCopies.get(i));
+                }
+            }
+        }
+        return auxCopies2;
+    }
+// </editor-fold> 
+//**********************************************************************************************************************
+//**********************************************************************************************************************
+
+//**********************************************************************************************************************
+//**********************************************************************************************************************
+// <editor-fold defaultstate="collapsed" desc="// REGISTRATION VALIDATORS">   
+    private boolean validateAddress() {
+        if (!jTextFieldRegisterAddress.getText().equals("Dirección...")) {
+            lblFailedAddress.setVisible(false);
+            return true;
+        } else {
+            lblFailedAddress.setVisible(true);
+            return false;
+        }
+    }
+
+    private boolean validateName() {
+        if (!jTextFieldRegisterName.getText().equals("Nombre...")
+                && !jTextFieldRegisterLastName.getText().equals("Apellidos...")) {
+            lblFailedName.setVisible(false);
+            return true;
+        } else {
+            lblFailedName.setVisible(true);
+            return false;
+        }
+    }
+
+    private boolean validatePhone() {
+        try {
+            String auxNumbStr = jTextFieldRegisterPhone.getText();
+            auxNumbStr = auxNumbStr.replace(" ", "");
+            int auxNumbInt = Integer.parseInt(auxNumbStr);
+            lblFailedPhone.setVisible(false);
+            return true;
+        } catch (Exception e) {
+            lblFailedPhone.setVisible(true);
+            return false;
+        }
+    }
+
+    private boolean validateUserName() {
+        boolean userExist = false;
+        String tryUser = jTextFieldRegisterUserName.getText();
+        if (!tryUser.equals("Nombre de usuario...")) {
+            for (int i = 0; i < listMembers.size(); i++) {
+                if (listMembers.get(i).getUserid().equals(tryUser)) {
+                    userExist = true;
+                }
+            }
+            if (!userExist) {
+                lblFailedUserName.setVisible(false);
+                return true;
+            }
+            lblFailedUserName.setVisible(true);
+        }
+        return false;
+    }
+// </editor-fold> 
+//**********************************************************************************************************************
+//**********************************************************************************************************************
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -146,6 +351,10 @@ public class LibraryMain extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jButtonCompleteRegister = new javax.swing.JButton();
+        lblFailedName = new javax.swing.JLabel();
+        lblFailedAddress = new javax.swing.JLabel();
+        lblFailedUserName = new javax.swing.JLabel();
+        lblFailedPhone = new javax.swing.JLabel();
         searchAndBorrow = new javax.swing.JPanel();
         searchPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -189,6 +398,11 @@ public class LibraryMain extends javax.swing.JFrame {
         lblWrongUPWD = new javax.swing.JLabel();
         borrowPanel = new javax.swing.JPanel();
         jButtonBackFromBorrow = new javax.swing.JButton();
+        lblDateOneDesc = new javax.swing.JLabel();
+        lblDateTwoDesc = new javax.swing.JLabel();
+        lblBorrowStartDate = new javax.swing.JLabel();
+        lblBorrowEndDate = new javax.swing.JLabel();
+        jButtonBorrow = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
 
         jMenuItem2.setText("jMenuItem2");
@@ -201,7 +415,7 @@ public class LibraryMain extends javax.swing.JFrame {
         mainJTabbedPanel.setSize(new java.awt.Dimension(1024, 600));
         mainJTabbedPanel.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                clarLog(evt);
+                clearLog(evt);
             }
         });
 
@@ -415,13 +629,10 @@ public class LibraryMain extends javax.swing.JFrame {
                                     .add(jTextFieldMemberLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                             .add(memberPanelLayout.createSequentialGroup()
                                 .add(186, 186, 186)
-                                .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                                .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(jLabel1))
                         .add(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(jLabel1)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         memberPanelLayout.setVerticalGroup(
             memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -471,12 +682,22 @@ public class LibraryMain extends javax.swing.JFrame {
         jTextFieldRegisterName.setForeground(new java.awt.Color(153, 153, 153));
         jTextFieldRegisterName.setText("Nombre...");
         jTextFieldRegisterName.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldRegisterName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                removeText(evt);
+            }
+        });
         jTextFieldRegisterName.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                jTextFieldRegisterNamecolorToWhite(evt);
+                colorToWhite(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldRegisterNamecolorToBrightGrey(evt);
+                colorToBrightGrey(evt);
+            }
+        });
+        jTextFieldRegisterName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                checkCompleteButton(evt);
             }
         });
 
@@ -484,51 +705,100 @@ public class LibraryMain extends javax.swing.JFrame {
         jTextFieldRegisterLastName.setForeground(new java.awt.Color(153, 153, 153));
         jTextFieldRegisterLastName.setText("Apellidos...");
         jTextFieldRegisterLastName.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldRegisterLastName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                removeText(evt);
+            }
+        });
         jTextFieldRegisterLastName.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                jTextFieldRegisterLastNamecolorToWhite(evt);
+                colorToWhite(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldRegisterLastNamecolorToBrightGrey(evt);
+                colorToBrightGrey(evt);
+            }
+        });
+        jTextFieldRegisterLastName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                checkCompleteButton(evt);
             }
         });
 
         jTextRegisterPWD.setBackground(new java.awt.Color(230, 230, 230));
         jTextRegisterPWD.setForeground(new java.awt.Color(153, 153, 153));
         jTextRegisterPWD.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
-        jTextRegisterPWD.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jTextRegisterPWDPWDColorToWhite(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextRegisterPWDPWDColorToGrey(evt);
+        jTextRegisterPWD.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                checkCompleteButton(evt);
             }
         });
 
-        jTextFieldRegisterAddress.setEditable(false);
         jTextFieldRegisterAddress.setBackground(new java.awt.Color(230, 230, 230));
         jTextFieldRegisterAddress.setForeground(new java.awt.Color(153, 153, 153));
         jTextFieldRegisterAddress.setText("Dirección...");
         jTextFieldRegisterAddress.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
-        jTextFieldRegisterAddress.setFocusable(false);
+        jTextFieldRegisterAddress.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                removeText(evt);
+            }
+        });
+        jTextFieldRegisterAddress.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                colorToWhite(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                colorToBrightGrey(evt);
+            }
+        });
+        jTextFieldRegisterAddress.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                checkCompleteButton(evt);
+            }
+        });
 
-        jTextFieldRegisterPhone.setEditable(false);
         jTextFieldRegisterPhone.setBackground(new java.awt.Color(230, 230, 230));
         jTextFieldRegisterPhone.setForeground(new java.awt.Color(153, 153, 153));
-        jTextFieldRegisterPhone.setText("Número de telefono...");
+        jTextFieldRegisterPhone.setText("Número de teléfono...");
         jTextFieldRegisterPhone.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
-        jTextFieldRegisterPhone.setFocusable(false);
+        jTextFieldRegisterPhone.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                removeText(evt);
+            }
+        });
+        jTextFieldRegisterPhone.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                colorToWhite(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                colorToBrightGrey(evt);
+            }
+        });
+        jTextFieldRegisterPhone.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                checkCompleteButton(evt);
+            }
+        });
 
         jTextFieldRegisterUserName.setBackground(new java.awt.Color(230, 230, 230));
         jTextFieldRegisterUserName.setForeground(new java.awt.Color(153, 153, 153));
         jTextFieldRegisterUserName.setText("Nombre de usuario...");
         jTextFieldRegisterUserName.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
+        jTextFieldRegisterUserName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                removeText(evt);
+            }
+        });
         jTextFieldRegisterUserName.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                jTextFieldRegisterUserNamecolorToWhite(evt);
+                colorToWhite(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldRegisterUserNamecolorToBrightGrey(evt);
+                colorToBrightGrey(evt);
+            }
+        });
+        jTextFieldRegisterUserName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                checkCompleteButton(evt);
             }
         });
 
@@ -540,6 +810,7 @@ public class LibraryMain extends javax.swing.JFrame {
 
         jButtonCompleteRegister.setText("Completa el registro");
         jButtonCompleteRegister.setActionCommand("Login");
+        jButtonCompleteRegister.setEnabled(false);
         jButtonCompleteRegister.setFocusable(false);
         jButtonCompleteRegister.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -547,50 +818,76 @@ public class LibraryMain extends javax.swing.JFrame {
             }
         });
 
+        lblFailedName.setBackground(new java.awt.Color(230, 230, 230));
+        lblFailedName.setForeground(new java.awt.Color(102, 102, 0));
+        lblFailedName.setText("Introduce tu nombre y apellidos");
+        lblFailedName.setVisible(false);
+
+        lblFailedAddress.setBackground(new java.awt.Color(230, 230, 230));
+        lblFailedAddress.setForeground(new java.awt.Color(102, 102, 0));
+        lblFailedAddress.setText("Introduce tu dirección");
+        lblFailedAddress.setVisible(false);
+
+        lblFailedUserName.setBackground(new java.awt.Color(230, 230, 230));
+        lblFailedUserName.setForeground(new java.awt.Color(204, 0, 51));
+        lblFailedUserName.setText("Nombre de usuario en uso");
+        lblFailedUserName.setVisible(false);
+
+        lblFailedPhone.setBackground(new java.awt.Color(230, 230, 230));
+        lblFailedPhone.setForeground(new java.awt.Color(102, 102, 0));
+        lblFailedPhone.setText("Introduce un número de teléfono válido (solo números)");
+        lblFailedPhone.setVisible(false);
+
         org.jdesktop.layout.GroupLayout registerPanelLayout = new org.jdesktop.layout.GroupLayout(registerPanel);
         registerPanel.setLayout(registerPanelLayout);
         registerPanelLayout.setHorizontalGroup(
             registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, registerPanelLayout.createSequentialGroup()
-                .addContainerGap(254, Short.MAX_VALUE)
-                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, registerPanelLayout.createSequentialGroup()
-                        .add(jButtonGoWelcome, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .add(registerPanelLayout.createSequentialGroup()
-                        .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(registerPanelLayout.createSequentialGroup()
-                                .add(jTextFieldRegisterAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(18, 18, 18)
-                                .add(jTextFieldRegisterPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(registerPanelLayout.createSequentialGroup()
-                                .add(jTextFieldRegisterUserName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(18, 18, 18)
-                                .add(jTextRegisterPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(259, Short.MAX_VALUE))))
-            .add(registerPanelLayout.createSequentialGroup()
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(registerPanelLayout.createSequentialGroup()
-                        .add(jTextFieldRegisterName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(18, 18, 18)
-                        .add(jTextFieldRegisterLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(registerPanelLayout.createSequentialGroup()
-                        .add(53, 53, 53)
-                        .add(jLabel7)))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .add(registerPanelLayout.createSequentialGroup()
                 .add(0, 0, Short.MAX_VALUE)
                 .add(jLabel6)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .add(registerPanelLayout.createSequentialGroup()
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(jLabel5)
+                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(registerPanelLayout.createSequentialGroup()
+                        .add(jTextFieldRegisterName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(18, 18, 18)
+                        .add(jTextFieldRegisterLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(registerPanelLayout.createSequentialGroup()
+                        .add(53, 53, 53)
+                        .add(jLabel7))
+                    .add(jLabel5)
+                    .add(registerPanelLayout.createSequentialGroup()
+                        .add(150, 150, 150)
+                        .add(jButtonCompleteRegister, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(lblFailedName, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .add(registerPanelLayout.createSequentialGroup()
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(jButtonCompleteRegister, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(254, Short.MAX_VALUE)
+                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(lblFailedUserName, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 753, Short.MAX_VALUE)
+                    .add(registerPanelLayout.createSequentialGroup()
+                        .add(lblFailedAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(18, 18, 18)
+                        .add(lblFailedPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 353, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(0, 0, Short.MAX_VALUE))
+                    .add(registerPanelLayout.createSequentialGroup()
+                        .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, registerPanelLayout.createSequentialGroup()
+                                .add(0, 0, Short.MAX_VALUE)
+                                .add(jButtonGoWelcome, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(registerPanelLayout.createSequentialGroup()
+                                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                    .add(registerPanelLayout.createSequentialGroup()
+                                        .add(jTextFieldRegisterAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                        .add(18, 18, 18)
+                                        .add(jTextFieldRegisterPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                    .add(registerPanelLayout.createSequentialGroup()
+                                        .add(jTextFieldRegisterUserName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                        .add(18, 18, 18)
+                                        .add(jTextRegisterPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                                .add(0, 253, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         registerPanelLayout.setVerticalGroup(
             registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -603,21 +900,29 @@ public class LibraryMain extends javax.swing.JFrame {
                 .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jTextFieldRegisterName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jTextFieldRegisterLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(84, 84, 84)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(lblFailedName)
+                .add(56, 56, 56)
                 .add(jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(18, 18, 18)
                 .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jTextFieldRegisterAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jTextFieldRegisterPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(70, 70, 70)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(lblFailedAddress)
+                    .add(lblFailedPhone))
+                .add(42, 42, 42)
                 .add(jLabel7)
                 .add(18, 18, 18)
                 .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(jTextFieldRegisterUserName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jTextRegisterPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 85, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(lblFailedUserName)
+                .add(59, 59, 59)
                 .add(jButtonCompleteRegister, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(33, 33, 33))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         coverPanel.add(registerPanel, "registerCard");
@@ -1007,19 +1312,55 @@ public class LibraryMain extends javax.swing.JFrame {
             }
         });
 
+        lblDateOneDesc.setText("Fecha inicial del préstamo:");
+
+        lblDateTwoDesc.setText("Fecha límite de entrega:");
+
+        jButtonBorrow.setText("Finalizar proceso de préstamo");
+        jButtonBorrow.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBorrowActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout borrowPanelLayout = new org.jdesktop.layout.GroupLayout(borrowPanel);
         borrowPanel.setLayout(borrowPanelLayout);
         borrowPanelLayout.setHorizontalGroup(
             borrowPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(borrowPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(jButtonBackFromBorrow, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 169, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(832, Short.MAX_VALUE))
+                .add(borrowPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(lblDateTwoDesc)
+                    .add(borrowPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                        .add(borrowPanelLayout.createSequentialGroup()
+                            .addContainerGap()
+                            .add(jButtonBackFromBorrow, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 169, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(borrowPanelLayout.createSequentialGroup()
+                            .add(119, 119, 119)
+                            .add(lblDateOneDesc))))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(borrowPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(lblBorrowStartDate)
+                    .add(lblBorrowEndDate))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, borrowPanelLayout.createSequentialGroup()
+                .add(0, 351, Short.MAX_VALUE)
+                .add(jButtonBorrow, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 305, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(351, Short.MAX_VALUE))
         );
         borrowPanelLayout.setVerticalGroup(
             borrowPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, borrowPanelLayout.createSequentialGroup()
-                .addContainerGap(532, Short.MAX_VALUE)
+                .addContainerGap(259, Short.MAX_VALUE)
+                .add(borrowPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(lblDateOneDesc)
+                    .add(lblBorrowStartDate))
+                .add(28, 28, 28)
+                .add(borrowPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(lblDateTwoDesc)
+                    .add(lblBorrowEndDate))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 77, Short.MAX_VALUE)
+                .add(jButtonBorrow, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 92, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 44, Short.MAX_VALUE)
                 .add(jButtonBackFromBorrow, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 37, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1054,62 +1395,10 @@ public class LibraryMain extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void filterByState() {
-        genModelCopies();
-        stateCopies = new ArrayList();
-        ArrayList<Copy> auxCopies2 = new ArrayList();
-        if (jRadioStored.isSelected()) {
-            for (int i = 0; i < listCopies.size(); i++) {
-                if (listCopies.get(i).getState().equals(Copy.CopyState.STORED)) {
-                    stateCopies.add(listCopies.get(i));
-                }
-            }
-        } else {
-            for (int i = 0; i < listCopies.size(); i++) {
-                stateCopies.add(listCopies.get(i));
-            }
-        }
-        modelCopies.clear();
-        if (!jTextFieldSearch.getText().equals("") && !jTextFieldSearch.getText().startsWith("Introduce tu búsqueda...")) {
-            auxCopies2 = filterByTAI(listCopies);
-            for (int i = 0; i < auxCopies2.size(); i++) {
-                modelCopies.addElement(auxCopies2.get(i));
-            }
-        } else {
-            for (int i = 0; i < stateCopies.size(); i++) {
-                modelCopies.addElement(stateCopies.get(i));
-            }
-        }
-    }
-
-    private ArrayList<Copy> filterByTAI(ArrayList<Copy> auxCopies) {
-        ArrayList<Copy> auxCopies2 = new ArrayList();
-        String auxText = jTextFieldSearch.getText().toLowerCase();
-        if (jRadioByTitle.isSelected()) {
-            for (int i = 0; i < auxCopies.size(); i++) {
-                if (auxCopies.get(i).getBook().getTitle().toLowerCase().contains(auxText)) {
-                    auxCopies2.add(auxCopies.get(i));
-                }
-            }
-        } else if (jRadioByAuthor.isSelected()) {
-            for (int i = 0; i < auxCopies.size(); i++) {
-                for (int j = 0; j < auxCopies.get(i).getBook().getAuthor().size(); j++) {
-                    if (auxCopies.get(i).getBook().getAuthor().get(j).getName().toLowerCase().contains(auxText) || auxCopies.get(i).getBook().getAuthor().get(j).getLastname().toLowerCase().contains(auxText)) {
-                        auxCopies2.add(auxCopies.get(i));
-                    }
-                }
-            }
-        } else if (jRadioByISBN.isSelected()) {
-            for (int i = 0; i < auxCopies.size(); i++) {
-                if (auxCopies.get(i).getBook().getISBN().toLowerCase().startsWith(auxText)) {
-                    auxCopies2.add(auxCopies.get(i));
-                }
-            }
-        }
-        return auxCopies2;
-    }
-
+    
+    //**********************************************************************************************************************
+    //**********************************************************************************************************************
+    // <editor-fold defaultstate="collapsed" desc="// SEARCH CARD METHODS">   
     private void removeSearchText(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_removeSearchText
         // TODO add your handling code here:
         // TODO add your handling code here:
@@ -1181,17 +1470,22 @@ public class LibraryMain extends javax.swing.JFrame {
 
     private void jButtonBorrowRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBorrowRequestActionPerformed
         // TODO add your handling code here:
+        borrowCopy = (Copy) jListCopies.getSelectedValue();
         CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
         if (loggedMember.getUserid() == null) {
             cl.show(searchAndBorrow, "cardLogin");
             mainJTabbedPanel.setTitleAt(1, "                        Acceso de usuarios                        ");
         } else {
+            fillborrow();
             cl.show(searchAndBorrow, "cardBorrow");
             mainJTabbedPanel.setTitleAt(1, "                       Procesar el préstamo                       ");
         }
         destination = SwitchPanel.BORROW;
     }//GEN-LAST:event_jButtonBorrowRequestActionPerformed
-
+    // </editor-fold> 
+    //**********************************************************************************************************************
+    //**********************************************************************************************************************
+    
     private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
         // TODO add your handling code here:
         clearLogin();
@@ -1200,37 +1494,12 @@ public class LibraryMain extends javax.swing.JFrame {
         mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
     }//GEN-LAST:event_jButtonBackActionPerformed
 
-    private void clearLogin() {
-        jTextFieldUser.setText("");
-        lblWrongUPWD.setVisible(false);
-        jTextFieldPWD.setText("");
-        lblPWD.setForeground(new Color(0, 0, 0));
-        lblUser.setForeground(new Color(0, 0, 0));
-    }
-
-    private void clearRegistration() {
-        jTextFieldRegisterName.setText("Nombre...");
-        jTextFieldRegisterLastName.setText("Apellidos...");
-        jTextFieldRegisterAddress.setText("Dirección...");
-        jTextFieldRegisterPhone.setText("Número de teléfono...");
-        jTextFieldRegisterUserName.setText("Nombre de usuario...");
-        jTextRegisterPWD.setText("");
-    }
-
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
         // TODO add your handling code here:
         loggedMember = new Member();
         for (int i = 0; i < listMembers.size(); i++) {
             if (jTextFieldUser.getText().equals(listMembers.get(i).getUserid()) && jTextFieldPWD.getText().equals(listMembers.get(i).getPwd())) {
-                loggedMember.setPersonName(listMembers.get(i).getPersonName());
-                loggedMember.setPersonLastName(listMembers.get(i).getPersonLastName());
-                loggedMember.setPhone(listMembers.get(i).getPhone());
-                loggedMember.setAddress(listMembers.get(i).getAddress());
-                loggedMember.setMemberID(listMembers.get(i).getMemberID());
-                loggedMember.setUserid(listMembers.get(i).getUserid());
-                loggedMember.setPwd(listMembers.get(i).getPwd());
-                loggedMember.setBorrowedCopies(listMembers.get(i).getBorrowedCopies());
-                loggedMember.setFines(listMembers.get(i).getFines());
+                loggedMember = new Member(listMembers.get(i));
                 break;
             }
 
@@ -1242,29 +1511,7 @@ public class LibraryMain extends javax.swing.JFrame {
             lblPWD.setForeground(new Color(204, 0, 0));
             lblUser.setForeground(new Color(204, 0, 0));
         } else {
-            CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
-            CardLayout cl2 = (CardLayout) (coverPanel.getLayout());
-            cl2.show(coverPanel, "memberCard");
-            fillMemberPanel();
-            mainJTabbedPanel.setTitleAt(0, "                         Panel de usuario                         ");
-            //lblWelcomeUser.setText("Bienvenid@ " + loggedMember.getPersonName());
-            switch (destination) {
-                case BORROW:
-                    cl.show(searchAndBorrow, "cardBorrow");
-                    mainJTabbedPanel.setTitleAt(1, "                       Procesar el préstamo                       ");
-                    break;
-                case PREFERENCES:
-                    cl.show(searchAndBorrow, "cardSearchPanel");
-                    mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
-                    mainJTabbedPanel.setSelectedIndex(0);
-                    break;
-                case SEARCH:
-                    cl.show(searchAndBorrow, "cardSearchPanel");
-                    mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
-                    break;
-                default:
-                    throw new AssertionError();
-            }
+            makeLogin();
         }
     }//GEN-LAST:event_jButtonLoginActionPerformed
 
@@ -1296,10 +1543,10 @@ public class LibraryMain extends javax.swing.JFrame {
         mainJTabbedPanel.setTitleAt(0, "                            Bienvenida                            ");
     }//GEN-LAST:event_jButtonCloseSession
 
-    private void clarLog(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_clarLog
+    private void clearLog(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_clearLog
         // TODO add your handling code here:
         clearLogin();
-    }//GEN-LAST:event_clarLog
+    }//GEN-LAST:event_clearLog
 
     private void ClearLogFromCard(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_ClearLogFromCard
         // TODO add your handling code here:
@@ -1323,6 +1570,7 @@ public class LibraryMain extends javax.swing.JFrame {
         JPasswordField txf = (JPasswordField) (evt.getComponent());
         txf.setBackground(new java.awt.Color(230, 230, 230));
         txf.setEchoChar('•');
+
     }//GEN-LAST:event_PWDColorToGrey
 
     private void PWDColorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_PWDColorToWhite
@@ -1346,51 +1594,144 @@ public class LibraryMain extends javax.swing.JFrame {
         mainJTabbedPanel.setTitleAt(0, "                            Bienvenida                            ");
     }//GEN-LAST:event_goToWelcome
 
-    private void jTextFieldRegisterNamecolorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldRegisterNamecolorToWhite
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldRegisterNamecolorToWhite
-
-    private void jTextFieldRegisterNamecolorToBrightGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldRegisterNamecolorToBrightGrey
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldRegisterNamecolorToBrightGrey
-
-    private void jTextFieldRegisterLastNamecolorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldRegisterLastNamecolorToWhite
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldRegisterLastNamecolorToWhite
-
-    private void jTextFieldRegisterLastNamecolorToBrightGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldRegisterLastNamecolorToBrightGrey
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldRegisterLastNamecolorToBrightGrey
-
-    private void jTextRegisterPWDPWDColorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextRegisterPWDPWDColorToWhite
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextRegisterPWDPWDColorToWhite
-
-    private void jTextRegisterPWDPWDColorToGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextRegisterPWDPWDColorToGrey
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextRegisterPWDPWDColorToGrey
-
-    private void jTextFieldRegisterUserNamecolorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldRegisterUserNamecolorToWhite
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldRegisterUserNamecolorToWhite
-
-    private void jTextFieldRegisterUserNamecolorToBrightGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldRegisterUserNamecolorToBrightGrey
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldRegisterUserNamecolorToBrightGrey
-
     private void tryRegistration(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tryRegistration
         // TODO add your handling code here:
+        Member newMember = new Member();
+        int aux = listMembers.size();
+        newMember.setMemberID(aux);
+        newMember.setAddress(jTextFieldRegisterAddress.getText());
+        newMember.setBorrowedCopies(new ArrayList<Borrow>());
+        newMember.setFines(new ArrayList<Fine>());
+        newMember.setPersonLastName(jTextFieldRegisterLastName.getText());
+        newMember.setPersonName(jTextFieldRegisterName.getText());
+        String auxNumbStr = jTextFieldRegisterPhone.getText();
+        auxNumbStr = auxNumbStr.replace(" ", "");
+        int auxNumbInt = Integer.parseInt(auxNumbStr);
+        newMember.setPhone(auxNumbInt);
+        newMember.setUserid(jTextFieldRegisterUserName.getText());
+        newMember.setPwd(jTextRegisterPWD.getText());
+        MemberDAL newMemberDAL = new MemberDAL();
+        newMemberDAL.addMember(newMember);
+        genMembers();
+        loggedMember = new Member(newMember);
+        destination = SwitchPanel.PREFERENCES;
+        makeLogin();
     }//GEN-LAST:event_tryRegistration
+
+    private void removeText(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_removeText
+        // TODO add your handling code here:
+        JTextField aux = (JTextField) evt.getSource();
+        switch (aux.getText()) {
+            case "Nombre...":
+                jTextFieldRegisterName.setText("");
+                break;
+            case "Apellidos...":
+                jTextFieldRegisterLastName.setText("");
+                break;
+            case "Dirección...":
+                jTextFieldRegisterAddress.setText("");
+                break;
+            case "Número de teléfono...":
+                jTextFieldRegisterPhone.setText("");
+                break;
+            case "Nombre de usuario...":
+                jTextFieldRegisterUserName.setText("");
+                break;
+            default:
+                break;
+        }
+    }//GEN-LAST:event_removeText
+
+    private void checkCompleteButton(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_checkCompleteButton
+        // TODO add your handling code here:
+                /*        System.out.println(!jTextFieldRegisterName.getText().equals("Nombre..."));
+         System.out.println(!jTextFieldRegisterLastName.getText().equals("Apellidos..."));
+         System.out.println(!jTextFieldRegisterAddress.getText().equals("Dirección..."));
+         System.out.println(validatePhone());
+         System.out.println(validateUserName());
+         System.out.println(jTextRegisterPWD.getText().equals(""));*/
+        if (validateName()
+                && validateAddress()
+                && validatePhone()
+                && validateUserName()
+                && !jTextRegisterPWD.getText().equals("")) {
+            jButtonCompleteRegister.setEnabled(true);
+        } else {
+            jButtonCompleteRegister.setEnabled(false);
+        }
+    }//GEN-LAST:event_checkCompleteButton
+
+    //**********************************************************************************************************************
+    //**********************************************************************************************************************
+    // <editor-fold defaultstate="collapsed" desc="// APPLY BORROW">   
+    private void jButtonBorrowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBorrowActionPerformed
+        // TODO add your handling code here:
+        Borrow newBorrow = new Borrow();
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        //FECHAS
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        Date startDate = new Date();
+        GregorianCalendar d = new GregorianCalendar(startDate.get(2), startDate.get(1), startDate.get(0));
+        //d.add(Calendar.DAY_OF_YEAR, 18);
+        //d.add(Calendar.DATE, 18);
+        d.add(Calendar.DAY_OF_MONTH, 18);
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        System.out.println(d.getTime());
+        Date expirationDate = new Date(dateFormat.format(d.getTime()));
+        newBorrow.setBorrowDate(startDate);
+        newBorrow.setLimitDate(expirationDate);
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        // ID
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        int newID = 0;
+        for (int i = 0; i < listBorrows.size(); i++) {
+            if (listBorrows.get(i).getBorrowID() > newID) {
+                newID = listBorrows.get(i).getBorrowID();
+            }
+        }
+        newID++;
+        newBorrow.setBorrowID(newID);
+        newBorrow.setBorrowedCopy(borrowCopy);
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        // AÑADIMOS EL PRÉSTAMO A LA LISTA Y MODIFICAMOS EL ESTADO DE LA COPIA
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        BorrowDAL.addBorrow(newBorrow);
+        MemberDAL.addBorrow(loggedMember.getMemberID(), newBorrow.getBorrowID());
+        CopyDAL.changeCopyState(borrowCopy.getBookCode(), "BORROWED");
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Recargamos desde la base de datos
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        loggedMember.setBorrowedCopies(newBorrow);
+        genBorrows();
+        genModelCopies();
+        genMembers();
+        fillMemberPanel();
+        borrowCopy = new Copy();
+        destination = SwitchPanel.PREFERENCES;
+        CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
+        cl.show(searchAndBorrow, "cardSearchPanel");
+        mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
+        mainJTabbedPanel.setSelectedIndex(0);
+    }//GEN-LAST:event_jButtonBorrowActionPerformed
+    // </editor-fold> 
+    //**********************************************************************************************************************
+    //**********************************************************************************************************************
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+        //**********************************************************************************************************************
+        //**********************************************************************************************************************
+        // <editor-fold defaultstate="collapsed" desc="// SETS WINDOWS STYLE IN WINDOWS SYSTEMS AND AQUA STYLE IN MAC SYSTEMS. FOR OTHER SYSTEMS SETS NIMBUS">   
         if (System.getProperty("os.name").startsWith("Mac OS")) {
             try {
                 UIManager.setLookAndFeel("com.apple.laf.AquaLookAndFeel");
@@ -1416,8 +1757,9 @@ public class LibraryMain extends javax.swing.JFrame {
                 java.util.logging.Logger.getLogger(LibraryMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             }
         }
-        //</editor-fold>
-
+        // </editor-fold> 
+        //**********************************************************************************************************************
+        //**********************************************************************************************************************
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -1426,6 +1768,9 @@ public class LibraryMain extends javax.swing.JFrame {
         });
 
     }
+//**********************************************************************************************************************
+//**********************************************************************************************************************
+// <editor-fold defaultstate="collapsed" desc="// VAR DECLARATION FROM NETBEANS">   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bGroupFilterState;
     private javax.swing.ButtonGroup bGroupFilterTAI;
@@ -1433,6 +1778,7 @@ public class LibraryMain extends javax.swing.JFrame {
     private javax.swing.JPanel coverPanel;
     private javax.swing.JButton jButtonBack;
     private javax.swing.JButton jButtonBackFromBorrow;
+    private javax.swing.JButton jButtonBorrow;
     private javax.swing.JButton jButtonBorrowRequest;
     private javax.swing.JButton jButtonCloseMemberPanel;
     private javax.swing.JButton jButtonCompleteRegister;
@@ -1489,9 +1835,17 @@ public class LibraryMain extends javax.swing.JFrame {
     private javax.swing.JLabel lblBookState;
     private javax.swing.JLabel lblBookTitle;
     private javax.swing.JLabel lblBookType;
+    private javax.swing.JLabel lblBorrowEndDate;
+    private javax.swing.JLabel lblBorrowStartDate;
     private javax.swing.JLabel lblCopyCode;
+    private javax.swing.JLabel lblDateOneDesc;
+    private javax.swing.JLabel lblDateTwoDesc;
     private javax.swing.JLabel lblEdition1;
     private javax.swing.JLabel lblEditorial;
+    private javax.swing.JLabel lblFailedAddress;
+    private javax.swing.JLabel lblFailedName;
+    private javax.swing.JLabel lblFailedPhone;
+    private javax.swing.JLabel lblFailedUserName;
     private javax.swing.JLabel lblPWD;
     private javax.swing.JLabel lblState;
     private javax.swing.JLabel lblTitle;
@@ -1511,6 +1865,12 @@ public class LibraryMain extends javax.swing.JFrame {
     private javax.swing.JPanel searchPanel;
     private javax.swing.JPanel welcomePanel;
     // End of variables declaration//GEN-END:variables
+// </editor-fold> 
+//**********************************************************************************************************************
+//**********************************************************************************************************************
+//**********************************************************************************************************************
+//**********************************************************************************************************************
+// <editor-fold defaultstate="collapsed" desc="// PRIVATE VAR DECLARATIONS">  
     DefaultTableModel tableModelBorrow = new DefaultTableModel(new Object[]{"Copia prestada", "Fecha de registro", "Fecha límite de entrega"}, 3) {
         @Override
         public boolean isCellEditable(int row, int column) {
@@ -1524,12 +1884,22 @@ public class LibraryMain extends javax.swing.JFrame {
         }
     };
     //private DefaultTableModel tableModelBorrow = new DefaultTableModel(new Object[]{"Copia prestada", "Fecha de registro", "Fecha límite"}, 3);
+
+    enum SwitchPanel {
+
+        BORROW, PREFERENCES, SEARCH;
+    }
     ArrayList<Author> listAuthors;
     ArrayList<Copy> listCopies;
     ArrayList<Member> listMembers;
+    ArrayList<Borrow> listBorrows;
     Member loggedMember = new Member();
     ArrayList<Copy> stateCopies = new ArrayList();
     SwitchPanel destination = SwitchPanel.SEARCH;
+    Copy borrowCopy;
     javax.swing.DefaultListModel<Copy> modelCopies = new javax.swing.DefaultListModel<>();
     javax.swing.DefaultListModel<Author> modelAuthors = new javax.swing.DefaultListModel<>();
+// </editor-fold> 
+//**********************************************************************************************************************
+//**********************************************************************************************************************
 }

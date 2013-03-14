@@ -1,4 +1,5 @@
 package util;
+
 /**
  * Fecha es una clase que implementa una date del calendario gregoriano
  */
@@ -30,8 +31,8 @@ public class Date {
     }
 
     /**
-     * Construye una Fecha con la date pasada en los 3 argumentos. Si la date
-     * no es correcta inicializa a cero todas las variables.
+     * Construye una Fecha con la date pasada en los 3 argumentos. Si la date no
+     * es correcta inicializa a cero todas las variables.
      */
     public Date(int day, int month, int year) {
         this.day = day;
@@ -77,6 +78,7 @@ public class Date {
         return "ERROR";
 
     }
+
     private static boolean isNumber(String n) {
         for (int i = 0; i < n.length(); i++) {
             if (!Character.isDigit(n.charAt(i))) {
@@ -168,10 +170,14 @@ public class Date {
         }
         return today.get(YEAR) - f.get(YEAR) - 1;
     }
+
     /**
-     * Dice si el String que se le pasa como parámetro se ajusta al formato 'dd/mm/aaaa' y si además se corresponde con una date válida
+     * Dice si el String que se le pasa como parámetro se ajusta al formato
+     * 'dd/mm/aaaa' y si además se corresponde con una date válida
+     *
      * @param stringDate
-     * @return true si el String se ajusta al formato 'dd/mm/aaaa' y si además se corresponde con una date válida
+     * @return true si el String se ajusta al formato 'dd/mm/aaaa' y si además
+     * se corresponde con una date válida
      */
     public static boolean isValidDate(String stringDate) {
         if (stringDate.length() == 10) {
@@ -189,7 +195,6 @@ public class Date {
         }
         return false;
     }
-
 
     //************MÉTODOS DE INSTANCIA ********
     /**
@@ -215,8 +220,8 @@ public class Date {
 
     /**
      * Cambia los atributos day y month con los valores de los parámetros y el
-     * atributo year con el valor de year de la date actual. Si el día y/o el month
-     * no son correctos asigna a todos los atributos el valor 0.
+     * atributo year con el valor de year de la date actual. Si el día y/o el
+     * month no son correctos asigna a todos los atributos el valor 0.
      *
      * @param day nº del 1 al 31 que representa el día del month
      * @param month nº del 1 al 12 que representa el month del year
@@ -313,7 +318,18 @@ public class Date {
 
     public String getShortFormat() {
         if (isValid()) {
-            return day + "/" + month + "/" + year;
+            String returnString;
+            if (day < 10) {
+                returnString = "0" + day;
+            } else {
+                returnString = "" + day;
+            }
+            if (month < 10) {
+                returnString += "/0" + month;
+            } else {
+                returnString += "/" + month;
+            }
+            return returnString + "/" + year;
         }
         return null;
     }

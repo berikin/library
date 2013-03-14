@@ -48,6 +48,12 @@ public class Library {
             BorrowDAL objBorrowDAL = new BorrowDAL();
             ArrayList<Borrow> borrowList = objBorrowDAL.getBorrows();
             System.out.println(borrowList.size());*/
+            BorrowDAL newb=new BorrowDAL();
+            ArrayList<Borrow> listb = newb.getBorrows();
+            System.out.println(listb.size());
+                    MemberDAL objmemberDAL = new MemberDAL();
+        ArrayList<Member> memberList = objmemberDAL.getMembers();
+            System.out.println(memberList.get(0).getBorrowedCopies().size());
         }
     }
 }

@@ -14,8 +14,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,7 +34,55 @@ public class MemberDAL {
         Node nValue = (Node) eMember.getElementsByTagName(strTag).item(0).getFirstChild();
         return nValue.getNodeValue();
     }
+public static void addBorrow(int memberID, int borrowID) {
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(new File("db/DBmembers.xml"));
+            doc.getDocumentElement().normalize();
+            int myItem = 0;
+            NodeList copyNodes = doc.getElementsByTagName("member");
+            for (int i = 0; i < copyNodes.getLength(); i++) {
+                Element a = (Element) copyNodes.item(i);
+                if (Integer.parseInt(getNodeValue("id", a)) == memberID) {
+                    myItem = i;
+                    break;
+                }
+            }
+            Node copy = doc.getElementsByTagName("borrows").item(myItem);
 
+            NodeList list = copy.getChildNodes();
+
+            for (int i = 0; i < list.getLength(); i++) {
+
+                Node node = list.item(i);
+
+                // get the salary element, and update the value
+                String a=node.getNodeValue();
+                if (a.equals("none"))
+                {
+                node.setTextContent(Integer.toString(borrowID));
+                }
+                else
+                {
+                a+=","+borrowID;
+                node.setTextContent(a);
+                }
+            }
+
+            // write the content into xml file
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new File("db/DBmembers.xml"));
+            transformer.transform(source, result);
+
+            System.out.println("Done");
+
+        } catch (ParserConfigurationException | SAXException | IOException | NumberFormatException | DOMException | AssertionError | TransformerFactoryConfigurationError | TransformerException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     public ArrayList<Member> getMembers() {
         BorrowDAL objBorrowDAL = new BorrowDAL();
         ArrayList<Borrow> borrowList = objBorrowDAL.getBorrows();
@@ -160,9 +210,11 @@ public class MemberDAL {
             // ADDING NODES
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            newMember.appendChild(newID);
             newMember.appendChild(newName);
             newMember.appendChild(newLastName);
             newMember.appendChild(newAddress);
+            newMember.appendChild(newPhone);
             newMember.appendChild(newFineList);
             newMember.appendChild(newBorrowList);
             newMember.appendChild(newUser);

@@ -17,6 +17,21 @@ public class Member extends Person {
     private int phone;
     private ArrayList<Borrow> borrowedCopies=new ArrayList();
     private ArrayList<Fine> fines=new ArrayList();
+
+    public Member() {
+    }
+
+    public Member(Member member) {
+        this.memberID = member.getMemberID();
+        this.address = member.getAddress();
+        this.userid = member.getUserid();
+        this.pwd = member.getPwd();
+        this.phone = member.getPhone();
+        this.borrowedCopies=member.getBorrowedCopies();
+        this.fines=member.getFines();
+        super.name=member.getPersonName();
+        super.lastname=member.getPersonLastName();
+    }
     
     public ArrayList<Fine> getFines() {
         return fines;

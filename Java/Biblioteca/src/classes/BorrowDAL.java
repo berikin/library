@@ -9,6 +9,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.*;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -69,5 +75,55 @@ public class BorrowDAL {
             //JOptionPane.showMessageDialog(null, parseE.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
         }
         return borrowList;
+    }
+    
+       public static void addBorrow(Borrow borrow) {
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(new File("db/DBborrows.xml"));
+            doc.getDocumentElement().normalize();
+            Node rootNode = doc.getDocumentElement();
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // PREPARING THE NEW MEMBER
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            Element newBorrow = doc.createElement("borrow");
+            Element newID = doc.createElement("borrowid");
+            newID.setTextContent(Integer.toString(borrow.getBorrowID()));
+            Element newCopyCode = doc.createElement("copycode");
+            newCopyCode.setTextContent(Integer.toString(borrow.getBorrowedCopy().getBookCode()));
+            Element newDateFirst = doc.createElement("datefirst");
+            newDateFirst.setTextContent(borrow.getBorrowDate().getShortFormat());
+            Element newDateLast = doc.createElement("datelast");
+            newDateLast.setTextContent(borrow.getLimitDate().getShortFormat());
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // ADDING NODES
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            newBorrow.appendChild(newID);
+            newBorrow.appendChild(newCopyCode);
+            newBorrow.appendChild(newDateFirst);
+            newBorrow.appendChild(newDateLast);
+            rootNode.appendChild(newBorrow);
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // SENDING TO XML FILE
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            TransformerFactory transFactory = TransformerFactory.newInstance();
+            Transformer transformer = transFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new File("db/DBborrows.xml"));
+            transformer.transform(source, result);
+        } catch (TransformerConfigurationException parseE) {
+            JOptionPane.showMessageDialog(null, parseE.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (TransformerException parseE) {
+            JOptionPane.showMessageDialog(null, parseE.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (ParserConfigurationException | SAXException | IOException parseE) {
+            JOptionPane.showMessageDialog(null, parseE.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

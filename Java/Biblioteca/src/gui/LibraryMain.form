@@ -19,6 +19,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -59,7 +60,7 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="clarLog"/>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="clearLog"/>
       </Events>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
@@ -544,30 +545,6 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="254" max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="jButtonGoWelcome" min="-2" pref="189" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="1" attributes="0">
-                                      <Group type="102" attributes="0">
-                                          <Component id="jTextFieldRegisterAddress" min="-2" pref="238" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="jTextFieldRegisterPhone" min="-2" pref="238" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" attributes="0">
-                                          <Component id="jTextFieldRegisterUserName" min="-2" pref="238" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="jTextRegisterPWD" min="-2" pref="238" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace pref="259" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                      </Group>
                       <Group type="102" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
@@ -575,7 +552,7 @@
                       </Group>
                       <Group type="102" attributes="0">
                           <EmptySpace max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jTextFieldRegisterName" min="-2" pref="238" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -586,9 +563,49 @@
                                   <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jButtonCompleteRegister" alignment="0" min="-2" pref="189" max="-2" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="150" max="-2" attributes="0"/>
+                                  <Component id="jButtonCompleteRegister" min="-2" pref="189" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="lblFailedName" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <EmptySpace pref="254" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lblFailedUserName" pref="753" max="32767" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="lblFailedAddress" min="-2" pref="238" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="lblFailedPhone" min="-2" pref="353" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="1" attributes="0">
+                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                          <Component id="jButtonGoWelcome" min="-2" pref="189" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="1" attributes="0">
+                                              <Group type="102" attributes="0">
+                                                  <Component id="jTextFieldRegisterAddress" min="-2" pref="238" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="jTextFieldRegisterPhone" min="-2" pref="238" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" attributes="0">
+                                                  <Component id="jTextFieldRegisterUserName" min="-2" pref="238" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="jTextRegisterPWD" min="-2" pref="238" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <EmptySpace min="0" pref="253" max="32767" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -604,23 +621,32 @@
                               <Component id="jTextFieldRegisterName" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jTextFieldRegisterLastName" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="84" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="lblFailedName" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
                           <Component id="jLabel6" min="-2" pref="16" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jTextFieldRegisterAddress" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jTextFieldRegisterPhone" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="70" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="lblFailedAddress" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblFailedPhone" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
                           <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="jTextFieldRegisterUserName" alignment="1" min="-2" max="-2" attributes="0"/>
                               <Component id="jTextRegisterPWD" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="85" max="32767" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="lblFailedUserName" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
                           <Component id="jButtonCompleteRegister" min="-2" pref="36" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+                          <EmptySpace pref="31" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -654,8 +680,10 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldRegisterNamecolorToWhite"/>
-                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldRegisterNamecolorToBrightGrey"/>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="removeText"/>
+                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="colorToWhite"/>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="colorToBrightGrey"/>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="checkCompleteButton"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jTextFieldRegisterLastName">
@@ -676,8 +704,10 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldRegisterLastNamecolorToWhite"/>
-                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldRegisterLastNamecolorToBrightGrey"/>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="removeText"/>
+                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="colorToWhite"/>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="colorToBrightGrey"/>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="checkCompleteButton"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jTextRegisterPWD">
@@ -697,8 +727,7 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextRegisterPWDPWDColorToWhite"/>
-                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextRegisterPWDPWDColorToGrey"/>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="checkCompleteButton"/>
                   </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JPasswordField()"/>
@@ -706,7 +735,6 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="jTextFieldRegisterAddress">
                   <Properties>
-                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="e6" green="e6" red="e6" type="rgb"/>
                     </Property>
@@ -721,19 +749,23 @@
                         </LineBorder>
                       </Border>
                     </Property>
-                    <Property name="focusable" type="boolean" value="false"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="removeText"/>
+                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="colorToWhite"/>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="colorToBrightGrey"/>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="checkCompleteButton"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jTextFieldRegisterPhone">
                   <Properties>
-                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="e6" green="e6" red="e6" type="rgb"/>
                     </Property>
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="99" green="99" red="99" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="N&#xfa;mero de telefono..."/>
+                    <Property name="text" type="java.lang.String" value="N&#xfa;mero de tel&#xe9;fono..."/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                         <LineBorder roundedCorners="true">
@@ -741,8 +773,13 @@
                         </LineBorder>
                       </Border>
                     </Property>
-                    <Property name="focusable" type="boolean" value="false"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="removeText"/>
+                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="colorToWhite"/>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="colorToBrightGrey"/>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="checkCompleteButton"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jTextFieldRegisterUserName">
                   <Properties>
@@ -762,8 +799,10 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldRegisterUserNamecolorToWhite"/>
-                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldRegisterUserNamecolorToBrightGrey"/>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="removeText"/>
+                    <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="colorToWhite"/>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="colorToBrightGrey"/>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="checkCompleteButton"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel5">
@@ -785,11 +824,68 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Completa el registro"/>
                     <Property name="actionCommand" type="java.lang.String" value="Login"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                     <Property name="focusable" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tryRegistration"/>
                   </Events>
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblFailedName">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="e6" green="e6" red="e6" type="rgb"/>
+                    </Property>
+                    <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="0" green="66" red="66" type="rgb"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Introduce tu nombre y apellidos"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="lblFailedName.setVisible(false);"/>
+                  </AuxValues>
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblFailedAddress">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="e6" green="e6" red="e6" type="rgb"/>
+                    </Property>
+                    <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="0" green="66" red="66" type="rgb"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Introduce tu direcci&#xf3;n"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="lblFailedAddress.setVisible(false);"/>
+                  </AuxValues>
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblFailedUserName">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="e6" green="e6" red="e6" type="rgb"/>
+                    </Property>
+                    <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="33" green="0" red="cc" type="rgb"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Nombre de usuario en uso"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="lblFailedUserName.setVisible(false);"/>
+                  </AuxValues>
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblFailedPhone">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="e6" green="e6" red="e6" type="rgb"/>
+                    </Property>
+                    <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="0" green="66" red="66" type="rgb"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Introduce un n&#xfa;mero de tel&#xe9;fono v&#xe1;lido (solo n&#xfa;meros)"/>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="lblFailedPhone.setVisible(false);"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
@@ -1451,17 +1547,50 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jButtonBackFromBorrow" min="-2" pref="169" max="-2" attributes="0"/>
-                          <EmptySpace pref="832" max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="lblDateTwoDesc" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jButtonBackFromBorrow" min="-2" pref="169" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="119" max="-2" attributes="0"/>
+                                      <Component id="lblDateOneDesc" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                          </Group>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lblBorrowStartDate" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblBorrowEndDate" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="0" pref="351" max="32767" attributes="0"/>
+                          <Component id="jButtonBorrow" min="-2" pref="305" max="-2" attributes="0"/>
+                          <EmptySpace pref="351" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="532" max="32767" attributes="0"/>
+                          <EmptySpace pref="259" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="lblDateOneDesc" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblBorrowStartDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="lblDateTwoDesc" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblBorrowEndDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace pref="77" max="32767" attributes="0"/>
+                          <Component id="jButtonBorrow" min="-2" pref="92" max="-2" attributes="0"/>
+                          <EmptySpace pref="44" max="32767" attributes="0"/>
                           <Component id="jButtonBackFromBorrow" min="-2" pref="37" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -1475,6 +1604,28 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonBackActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblDateOneDesc">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Fecha inicial del pr&#xe9;stamo:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblDateTwoDesc">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Fecha l&#xed;mite de entrega:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblBorrowStartDate">
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblBorrowEndDate">
+                </Component>
+                <Component class="javax.swing.JButton" name="jButtonBorrow">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Finalizar proceso de pr&#xe9;stamo"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonBorrowActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
