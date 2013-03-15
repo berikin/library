@@ -9,7 +9,7 @@ and open the template in the editor.
         <address>Calle Falsa 1 2 3</address>
         <phone>555122321</phone>
         <finelist>none</finelist>
-        <borrows>1</borrows>
+        <borrows>1,2</borrows>
         <userid>pepe</userid>
         <pwd>1234</pwd>
     </member>

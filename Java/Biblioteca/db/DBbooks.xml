@@ -16,7 +16,6 @@ EJEMPLO DE LIBRO
         </book>
 -->
 <DBbooks>
-    <books>
         <book>
             <isbn>978-84-9908-405-3</isbn>
             <title>Recuerdos del futuro</title>
@@ -39,5 +38,4 @@ EJEMPLO DE LIBRO
             <author>1</author>
             <img>/img/ClubLucha.jpg</img>
         </book>
-    </books>
 </DBbooks>

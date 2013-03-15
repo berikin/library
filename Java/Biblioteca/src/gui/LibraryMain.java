@@ -563,12 +563,16 @@ public class LibraryMain extends javax.swing.JFrame {
         jScrollTableBorrows.setHorizontalScrollBar(null);
 
         jTableBorrows.setModel(tableModelBorrow);
-        jTableBorrows.setFocusTraversalKeysEnabled(false);
+        jTableBorrows.setFocusTraversalPolicyProvider(true);
         jTableBorrows.setFocusable(false);
         jTableBorrows.setGridColor(new java.awt.Color(230, 230, 230));
         jTableBorrows.setRequestFocusEnabled(false);
-        jTableBorrows.setRowSelectionAllowed(false);
         jTableBorrows.setShowGrid(false);
+        jTableBorrows.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                returnBook(evt);
+            }
+        });
         jScrollTableBorrows.setViewportView(jTableBorrows);
 
         jScrollTableFines.setBackground(new java.awt.Color(230, 230, 230));
@@ -660,12 +664,12 @@ public class LibraryMain extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
-                        .add(0, 800, Short.MAX_VALUE)
+                        .add(0, 806, Short.MAX_VALUE)
                         .add(jButtonCloseMemberPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jScrollTableBorrows)
                     .add(jScrollTableFines)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
-                        .add(0, 0, Short.MAX_VALUE)
+                        .add(0, 178, Short.MAX_VALUE)
                         .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel3)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel8))
@@ -683,11 +687,10 @@ public class LibraryMain extends javax.swing.JFrame {
                         .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel4)
                             .add(jLabel9))
-                        .add(0, 0, Short.MAX_VALUE))
+                        .add(0, 178, Short.MAX_VALUE))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
                         .add(0, 0, Short.MAX_VALUE)
-                        .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(memberPanelLayout.createSequentialGroup()
                         .add(0, 0, Short.MAX_VALUE)
                         .add(jLabel1)
@@ -1786,7 +1789,7 @@ public class LibraryMain extends javax.swing.JFrame {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         BorrowDAL.addBorrow(newBorrow);
-        MemberDAL.addBorrow(loggedMember.getMemberID(), newBorrow.getBorrowID());
+        MemberDAL.changeFineBorrow(loggedMember.getMemberID(), newBorrow.getBorrowID(), "borrows");
         CopyDAL.changeCopyState(borrowCopy.getBookCode(), "BORROWED");
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1806,10 +1809,58 @@ public class LibraryMain extends javax.swing.JFrame {
         mainJTabbedPanel.setSelectedIndex(0);
         memberPanel.requestFocus();
     }//GEN-LAST:event_jButtonBorrowActionPerformed
+
+    private void returnBook(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_returnBook
+        // TODO add your handling code here:
+        int a=jTableBorrows.getSelectedRow();
+        System.out.println(loggedMember.getBorrowedCopies().get(a).getBorrowedCopy().getBook().getTitle());
+        checkReturnDate(a);
+    }//GEN-LAST:event_returnBook
     // </editor-fold> 
     //**********************************************************************************************************************
     //**********************************************************************************************************************
 
+    private void checkReturnDate(int SelectedRow){
+    Date limit=loggedMember.getBorrowedCopies().get(SelectedRow).getLimitDate();
+    Date today=new Date();
+    if(today.compareTo(limit)>0)
+    {
+    //SE HA PASADO DE FECHA, HAY QUE APLICAR SANCIÓN
+        double tax=0.0;
+        if(Date.difDaysBetweenDates(limit,today)>180)
+        {
+        tax=5.0;
+        }
+        /*/////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        // AÑADIMOS LA MULTA A LA LISTA
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        BorrowDAL.addBorrow(newBorrow);
+        MemberDAL.changeFineBorrow(loggedMember.getMemberID(), newBorrow.getBorrowID(), "borrows");
+        CopyDAL.changeCopyState(borrowCopy.getBookCode(), "BORROWED");
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Recargamos desde la base de datos
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        loggedMember.setBorrowedCopies(newBorrow);
+        genBorrows();
+        genModelCopies();
+        genMembers();
+        fillMemberPanel();
+        borrowCopy = new Copy();
+        destination = SwitchPanel.PREFERENCES;
+        CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
+        cl.show(searchAndBorrow, "cardSearchPanel");
+        mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
+        mainJTabbedPanel.setSelectedIndex(0);
+        memberPanel.requestFocus();*/
+    }
+    else
+    {}
+    }
+    
     /**
      * @param args the command line arguments
      */

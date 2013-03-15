@@ -7,4 +7,4 @@ and open the template in the editor.
     		<copycode>1</copycode>
     		<datefirst>12/03/2013</datefirst>
     		<datelast>30/03/2013</datelast>
-    	</borrow><borrow><borrowid>1</borrowid><copycode>1</copycode><datefirst>14/03/2013</datefirst><datelast>01/04/2013</datelast></borrow></DBborrows>
+    	</borrow><borrow><borrowid>1</borrowid><copycode>1</copycode><datefirst>14/03/2013</datefirst><datelast>01/04/2013</datelast></borrow><borrow><borrowid>2</borrowid><copycode>4</copycode><datefirst>15/03/2013</datefirst><datelast>10/03/2013</datelast></borrow></DBborrows>

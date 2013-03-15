@@ -34,7 +34,7 @@ public class MemberDAL {
         Node nValue = (Node) eMember.getElementsByTagName(strTag).item(0).getFirstChild();
         return nValue.getNodeValue();
     }
-public static void addBorrow(int memberID, int borrowID) {
+public static void changeFineBorrow(int memberID, int itemID,String item) {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -49,7 +49,7 @@ public static void addBorrow(int memberID, int borrowID) {
                     break;
                 }
             }
-            Node copy = doc.getElementsByTagName("borrows").item(myItem);
+            Node copy = doc.getElementsByTagName(item).item(myItem);
 
             NodeList list = copy.getChildNodes();
 
@@ -61,11 +61,11 @@ public static void addBorrow(int memberID, int borrowID) {
                 String a=node.getNodeValue();
                 if (a.equals("none"))
                 {
-                node.setTextContent(Integer.toString(borrowID));
+                node.setTextContent(Integer.toString(itemID));
                 }
                 else
                 {
-                a+=","+borrowID;
+                a+=","+itemID;
                 node.setTextContent(a);
                 }
             }

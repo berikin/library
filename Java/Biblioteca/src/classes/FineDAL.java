@@ -9,6 +9,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.*;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -59,5 +65,55 @@ public class FineDAL {
             JOptionPane.showMessageDialog(null, parseE.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
         }
         return fineList;
+    }
+    
+          public static void addFine(Fine fine) {
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(new File("db/DBfines.xml"));
+            doc.getDocumentElement().normalize();
+            Node rootNode = doc.getDocumentElement();
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // PREPARING THE NEW MEMBER
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            Element newFine = doc.createElement("fine");
+            Element newID = doc.createElement("fineid");
+            newID.setTextContent(Integer.toString(fine.getFineID()));
+            Element newMemberID = doc.createElement("memberid");
+            newMemberID.setTextContent(Integer.toString(fine.getMemberID()));
+            Element newStartDate = doc.createElement("startdate");
+            newStartDate.setTextContent(fine.getStartDate().getShortFormat());
+            Element newEndDate = doc.createElement("enddate");
+            newEndDate.setTextContent(fine.getEndDate().getShortFormat());
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // ADDING NODES
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            newFine.appendChild(newID);
+            newFine.appendChild(newMemberID);
+            newFine.appendChild(newStartDate);
+            newFine.appendChild(newEndDate);
+            rootNode.appendChild(newFine);
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // SENDING TO XML FILE
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            TransformerFactory transFactory = TransformerFactory.newInstance();
+            Transformer transformer = transFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new File("db/DBfines.xml"));
+            transformer.transform(source, result);
+        } catch (TransformerConfigurationException parseE) {
+            JOptionPane.showMessageDialog(null, parseE.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (TransformerException parseE) {
+            JOptionPane.showMessageDialog(null, parseE.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (ParserConfigurationException | SAXException | IOException parseE) {
+            JOptionPane.showMessageDialog(null, parseE.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
