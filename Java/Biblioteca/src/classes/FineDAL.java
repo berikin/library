@@ -88,6 +88,8 @@ public class FineDAL {
             newStartDate.setTextContent(fine.getStartDate().getShortFormat());
             Element newEndDate = doc.createElement("enddate");
             newEndDate.setTextContent(fine.getEndDate().getShortFormat());
+            Element newTax = doc.createElement("tax");
+            newTax.setTextContent(Double.toString(fine.getTax()));
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // ADDING NODES

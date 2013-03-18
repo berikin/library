@@ -14,6 +14,15 @@ public class Borrow {
     private int borrowID;
     Copy copy;
     private Date borrowDate, limitDate;
+    private boolean active;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
     public int getBorrowID() {
         return borrowID;

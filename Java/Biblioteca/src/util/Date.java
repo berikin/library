@@ -346,7 +346,7 @@ public class Date {
      * Compara el objeto Fecha al que se le envía el mensaje con el objeto Fecha
      * del argumento.
      *
-     * @param otra Fecha - la date con la que será comparada
+     * @param date Fecha - la date con la que será comparada
      * @return Devuelve cero si el argumento Fecha es igual que este objeto
      * Fecha; un valor menor que cero si este objeto Fecha es menor que el
      * objeto Fecha del argumento; un valor mayor que cero si el objeto Fecha

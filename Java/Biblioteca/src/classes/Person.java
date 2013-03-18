@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package classes;
 
 /**
@@ -9,12 +5,8 @@ package classes;
  * @author berik
  */
 public class Person {
-    protected String name, lastname;
 
-   /* protected Person(String name, String lastname) {
-        this.name = name;
-        this.lastname = lastname;
-    }*/
+    protected String name, lastname;
 
     public String getName() {
         return name;
@@ -31,10 +23,9 @@ public class Person {
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
-    
+
     @Override
-    public String toString(){
-    return (name+" "+lastname);
+    public String toString() {
+        return (name + " " + lastname);
     }
-    
 }

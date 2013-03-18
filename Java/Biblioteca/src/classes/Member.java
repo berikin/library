@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package classes;
 
 import java.util.ArrayList;
@@ -15,8 +11,8 @@ public class Member extends Person {
     private int memberID;
     private String address, userid, pwd;
     private int phone;
-    private ArrayList<Borrow> borrowedCopies=new ArrayList();
-    private ArrayList<Fine> fines=new ArrayList();
+    private ArrayList<Borrow> borrowedCopies = new ArrayList();
+    private ArrayList<Fine> fines = new ArrayList();
 
     public Member() {
     }
@@ -27,12 +23,12 @@ public class Member extends Person {
         this.userid = member.getUserid();
         this.pwd = member.getPwd();
         this.phone = member.getPhone();
-        this.borrowedCopies=member.getBorrowedCopies();
-        this.fines=member.getFines();
-        super.name=member.getPersonName();
-        super.lastname=member.getPersonLastName();
+        this.borrowedCopies = member.getBorrowedCopies();
+        this.fines = member.getFines();
+        super.name = member.getPersonName();
+        super.lastname = member.getPersonLastName();
     }
-    
+
     public ArrayList<Fine> getFines() {
         return fines;
     }
@@ -40,13 +36,14 @@ public class Member extends Person {
     public void setFines(Fine fines) {
         this.fines.add(fines);
     }
+
     public void setFines(ArrayList<Fine> fines) {
         this.fines.clear();
-        for (int i=0; i<fines.size();i++)
-        {
-        this.fines.add(fines.get(i));
+        for (int i = 0; i < fines.size(); i++) {
+            this.fines.add(fines.get(i));
         }
     }
+
     public ArrayList<Borrow> getBorrowedCopies() {
         return borrowedCopies;
     }
@@ -54,11 +51,11 @@ public class Member extends Person {
     public void setBorrowedCopies(Borrow borrowedCopies) {
         this.borrowedCopies.add(borrowedCopies);
     }
+
     public void setBorrowedCopies(ArrayList<Borrow> borrowedCopies) {
         this.borrowedCopies.clear();
-        for (int i=0; i<borrowedCopies.size();i++)
-        {
-        this.borrowedCopies.add(borrowedCopies.get(i));
+        for (int i = 0; i < borrowedCopies.size(); i++) {
+            this.borrowedCopies.add(borrowedCopies.get(i));
         }
     }
 

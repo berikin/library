@@ -15,6 +15,7 @@ import static classes.Copy.CopyState.BORROWED;
 import static classes.Copy.CopyState.STORED;
 import classes.CopyDAL;
 import classes.Fine;
+import classes.FineDAL;
 import classes.Member;
 import classes.MemberDAL;
 import java.awt.CardLayout;
@@ -379,6 +380,7 @@ public class LibraryMain extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        jButtonReturnCopy = new javax.swing.JButton();
         registerPanel = new javax.swing.JPanel();
         jButtonGoWelcome = new javax.swing.JButton();
         jTextFieldRegisterName = new javax.swing.JTextField();
@@ -570,7 +572,7 @@ public class LibraryMain extends javax.swing.JFrame {
         jTableBorrows.setShowGrid(false);
         jTableBorrows.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                returnBook(evt);
+                activateReturnButton(evt);
             }
         });
         jScrollTableBorrows.setViewportView(jTableBorrows);
@@ -656,6 +658,14 @@ public class LibraryMain extends javax.swing.JFrame {
 
         jLabel9.setText("Clave");
 
+        jButtonReturnCopy.setText("Devolver Copia");
+        jButtonReturnCopy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                returnBook(evt);
+            }
+        });
+        jButtonReturnCopy.setVisible(false);
+
         org.jdesktop.layout.GroupLayout memberPanelLayout = new org.jdesktop.layout.GroupLayout(memberPanel);
         memberPanel.setLayout(memberPanelLayout);
         memberPanelLayout.setHorizontalGroup(
@@ -668,32 +678,37 @@ public class LibraryMain extends javax.swing.JFrame {
                         .add(jButtonCloseMemberPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jScrollTableBorrows)
                     .add(jScrollTableFines)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
-                        .add(0, 178, Short.MAX_VALUE)
-                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel3)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel8))
-                        .add(18, 18, 18)
-                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jTextFieldMemberPhone1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jTextFieldMemberAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jTextFieldMemberName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(18, 18, 18)
-                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(jTextFieldMemberPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jTextFieldMemberPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jTextFieldMemberLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jLabel4)
-                            .add(jLabel9))
-                        .add(0, 178, Short.MAX_VALUE))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
-                        .add(0, 0, Short.MAX_VALUE)
-                        .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(memberPanelLayout.createSequentialGroup()
                         .add(0, 0, Short.MAX_VALUE)
                         .add(jLabel1)
+                        .add(0, 0, Short.MAX_VALUE))
+                    .add(memberPanelLayout.createSequentialGroup()
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
+                                .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel3)
+                                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel8))
+                                .add(18, 18, 18)
+                                .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(jTextFieldMemberPhone1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(jTextFieldMemberAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(jTextFieldMemberName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .add(18, 18, 18))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
+                                .add(jButtonReturnCopy)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(memberPanelLayout.createSequentialGroup()
+                                .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                    .add(jTextFieldMemberPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(jTextFieldMemberPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(jTextFieldMemberLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(jLabel4)
+                                    .add(jLabel9)))
+                            .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 429, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .add(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -702,7 +717,7 @@ public class LibraryMain extends javax.swing.JFrame {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(jButtonCloseMemberPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 93, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 92, Short.MAX_VALUE)
                 .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(memberPanelLayout.createSequentialGroup()
                         .add(jTextFieldMemberName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -724,14 +739,16 @@ public class LibraryMain extends javax.swing.JFrame {
                         .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(jTextFieldMemberPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(jLabel9))))
-                .add(58, 58, 58)
-                .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(54, 54, 54)
+                .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jButtonReturnCopy))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(jScrollTableBorrows, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 81, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(29, 29, 29)
                 .add(jLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 24, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(jScrollTableFines, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
+                .add(jScrollTableFines, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1783,13 +1800,14 @@ public class LibraryMain extends javax.swing.JFrame {
         newID++;
         newBorrow.setBorrowID(newID);
         newBorrow.setBorrowedCopy(borrowCopy);
+        newBorrow.setActive(true);
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // AÑADIMOS EL PRÉSTAMO A LA LISTA Y MODIFICAMOS EL ESTADO DE LA COPIA
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         BorrowDAL.addBorrow(newBorrow);
-        MemberDAL.changeFineBorrow(loggedMember.getMemberID(), newBorrow.getBorrowID(), "borrows");
+        MemberDAL.changeFineBorrow(loggedMember.getMemberID(), newBorrow.getBorrowID(), "borrows", 0);
         CopyDAL.changeCopyState(borrowCopy.getBookCode(), "BORROWED");
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1810,41 +1828,84 @@ public class LibraryMain extends javax.swing.JFrame {
         memberPanel.requestFocus();
     }//GEN-LAST:event_jButtonBorrowActionPerformed
 
-    private void returnBook(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_returnBook
+    private void activateReturnButton(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_activateReturnButton
         // TODO add your handling code here:
-        int a=jTableBorrows.getSelectedRow();
-        System.out.println(loggedMember.getBorrowedCopies().get(a).getBorrowedCopy().getBook().getTitle());
+        int a = jTableBorrows.getSelectedRow();
+        //System.out.println(loggedMember.getBorrowedCopies().get(a).getBorrowedCopy().getBook().getTitle());
+        if (a != -1) {
+            jButtonReturnCopy.setVisible(true);
+        } else {
+            jButtonReturnCopy.setVisible(false);
+        }
+
+    }//GEN-LAST:event_activateReturnButton
+
+    private void returnBook(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnBook
+        // TODO add your handling code here:
+        int a = jTableBorrows.getSelectedRow();
         checkReturnDate(a);
     }//GEN-LAST:event_returnBook
     // </editor-fold> 
     //**********************************************************************************************************************
     //**********************************************************************************************************************
 
-    private void checkReturnDate(int SelectedRow){
-    Date limit=loggedMember.getBorrowedCopies().get(SelectedRow).getLimitDate();
-    Date today=new Date();
-    if(today.compareTo(limit)>0)
-    {
-    //SE HA PASADO DE FECHA, HAY QUE APLICAR SANCIÓN
-        double tax=0.0;
-        if(Date.difDaysBetweenDates(limit,today)>180)
-        {
-        tax=5.0;
+    private void checkReturnDate(int SelectedRow) {
+        Date limit = loggedMember.getBorrowedCopies().get(SelectedRow).getLimitDate();
+        Date today = new Date();
+        if (today.compareTo(limit) > 0) {
+            //SE HA PASADO DE FECHA, HAY QUE APLICAR SANCIÓN
+            double tax = 0.0;
+            long overDays = Date.difDaysBetweenDates(limit, today);
+            Fine newFine = new Fine();
+            if (overDays > 180) {
+                tax = 5.0;
+            }
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            // AÑADIMOS LA MULTA A LA LISTA
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            GregorianCalendar endDate = new GregorianCalendar(today.get(2), (today.get(1) - 1), today.get(0));
+            endDate.add(Calendar.DAY_OF_YEAR, (int) overDays);
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date expirationDate = new Date(dateFormat.format(endDate.getTime()));
+            newFine.setStartDate(today);
+            newFine.setEndDate(expirationDate);
+            newFine.setMemberID(loggedMember.getMemberID());
+            newFine.setTax(tax);
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            // ID
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            int newID = 0;
+            for (int i = 0; i < listBorrows.size(); i++) {
+                if (listBorrows.get(i).getBorrowID() > newID) {
+                    newID = listBorrows.get(i).getBorrowID();
+                }
+            }
+            newID++;
+            newFine.setFineID(newID);
+            FineDAL.addFine(newFine);
+            MemberDAL.changeFineBorrow(loggedMember.getMemberID(), newFine.getFineID(), "finelist", 0);
+            loggedMember.setFines(newFine);
         }
-        /*/////////////////////////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
-        // AÑADIMOS LA MULTA A LA LISTA
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        BorrowDAL.addBorrow(newBorrow);
-        MemberDAL.changeFineBorrow(loggedMember.getMemberID(), newBorrow.getBorrowID(), "borrows");
-        CopyDAL.changeCopyState(borrowCopy.getBookCode(), "BORROWED");
+        // CAMBIAMOS EL ESTADO DEL LIBRO
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        CopyDAL.changeCopyState(loggedMember.getBorrowedCopies().get(SelectedRow).getBorrowedCopy().getBookCode(), "STORED");
+        BorrowDAL.changeBorrowState(loggedMember.getBorrowedCopies().get(SelectedRow).getBorrowID(), false);
+        MemberDAL.changeFineBorrow(loggedMember.getMemberID(), loggedMember.getBorrowedCopies().get(SelectedRow).getBorrowedCopy().getBookCode(), "borrows", 1);
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Recargamos desde la base de datos
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        loggedMember.setBorrowedCopies(newBorrow);
+        ArrayList<Borrow> a = loggedMember.getBorrowedCopies();
+        a.remove(a.size() - 1);
+        loggedMember.setBorrowedCopies(a);
         genBorrows();
         genModelCopies();
         genMembers();
@@ -1855,12 +1916,9 @@ public class LibraryMain extends javax.swing.JFrame {
         cl.show(searchAndBorrow, "cardSearchPanel");
         mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
         mainJTabbedPanel.setSelectedIndex(0);
-        memberPanel.requestFocus();*/
+        memberPanel.requestFocus();
     }
-    else
-    {}
-    }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -1922,6 +1980,7 @@ public class LibraryMain extends javax.swing.JFrame {
     private javax.swing.JButton jButtonLogin;
     private javax.swing.JButton jButtonOpenWelcome;
     private javax.swing.JButton jButtonRegister;
+    private javax.swing.JButton jButtonReturnCopy;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
