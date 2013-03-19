@@ -22,17 +22,19 @@ import org.xml.sax.SAXException;
 
 /**
  * MEMBER DATA ACCESS LAYER FOR MEMBER CLASS
+ *
  * @author berik
  */
 public class MemberDAL {
-
+    
     private static String getNodeValue(String strTag, Element eMember) {
         Node nValue = (Node) eMember.getElementsByTagName(strTag).item(0).getFirstChild();
         return nValue.getNodeValue();
     }
 
     /**
-     * Método que nos permite tanto agregar como eliminar multas y préstamos a un determinado miembro.
+     * Método que nos permite tanto agregar como eliminar multas y préstamos a
+     * un determinado miembro.
      *
      * @param memberID ID del miembro al que queremos modificar datos
      * @param itemID ID de lo que queremos modificar
@@ -118,10 +120,12 @@ public class MemberDAL {
             JOptionPane.showMessageDialog(null, e.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     /**
-     * Método que genera un ArrayList de miembros. Carga la información a partir de diversos ficheros
-     * XML y llamando a otros métodos similares a este que generan ArrayList de multas, préstamos, etc.
-     * 
+     * Método que genera un ArrayList de miembros. Carga la información a partir
+     * de diversos ficheros XML y llamando a otros métodos similares a este que
+     * generan ArrayList de multas, préstamos, etc.
+     *
      * @return ArrayList con todos los miembros de la base de datos
      */
     public ArrayList<Member> getMembers() {
@@ -177,6 +181,9 @@ public class MemberDAL {
                     objMember.setPhone(Integer.parseInt(getNodeValue("phone", anElement)));
                     objMember.setUserid(getNodeValue("userid", anElement));
                     objMember.setPwd(getNodeValue("pwd", anElement));
+                    if (!getNodeValue("dnie", anElement).equals("none")) {
+                        objMember.setDnie(getNodeValue("dnie", anElement));
+                    }
                     String borrows = getNodeValue("borrows", anElement);
                     //*********************************************************************************//
                     // AL UTILIZAR NORMALIZE() NOS VEMOS OBLIGADOS A INTRODUCIR ALGÚN VALOR EN LOS     //
@@ -242,8 +249,10 @@ public class MemberDAL {
         }
         return memberList;
     }
+
     /**
      * Método que permite agregar un miembro nuevo al fichero XML.
+     *
      * @param member miembro que será agregado al fichero.
      */
     public void addMember(Member member) {
@@ -269,6 +278,12 @@ public class MemberDAL {
             newAddress.setTextContent(member.getAddress());
             Element newPhone = doc.createElement("phone");
             newPhone.setTextContent(Integer.toString(member.getPhone()));
+            Element newDnie = doc.createElement("dnie");
+            if (member.getDnie().isEmpty()) {
+                newDnie.setTextContent("none");
+            } else {
+                newDnie.setTextContent(member.getDnie());
+            }
             String fines = "";
             if (member.getFines().isEmpty()) {
                 fines = "none";
@@ -309,6 +324,7 @@ public class MemberDAL {
             newMember.appendChild(newLastName);
             newMember.appendChild(newAddress);
             newMember.appendChild(newPhone);
+            newMember.appendChild(newDnie);
             newMember.appendChild(newFineList);
             newMember.appendChild(newBorrowList);
             newMember.appendChild(newUser);

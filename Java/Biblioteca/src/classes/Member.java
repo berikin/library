@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Member extends Person {
 
     private int memberID;
-    private String address, userid, pwd;
+    private String address, userid, pwd, dnie;
     private int phone;
     private ArrayList<Borrow> borrowedCopies = new ArrayList();
     private ArrayList<Fine> fines = new ArrayList();
@@ -23,10 +23,19 @@ public class Member extends Person {
         this.userid = member.getUserid();
         this.pwd = member.getPwd();
         this.phone = member.getPhone();
+        this.dnie = member.getDnie();
         this.borrowedCopies = member.getBorrowedCopies();
         this.fines = member.getFines();
         super.name = member.getPersonName();
         super.lastname = member.getPersonLastName();
+    }
+
+    public String getDnie() {
+        return dnie;
+    }
+
+    public void setDnie(String dnie) {
+        this.dnie = dnie;
     }
 
     public ArrayList<Fine> getFines() {

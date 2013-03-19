@@ -18,8 +18,20 @@ import classes.Fine;
 import classes.FineDAL;
 import classes.Member;
 import classes.MemberDAL;
+import es.gob.jmulticard.jse.provider.DnieProvider;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import java.security.Security;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
+import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,11 +40,13 @@ import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
+import util.AuthCert;
 import util.Date;
 // </editor-fold> 
 //**********************************************************************************************************************
@@ -438,6 +452,7 @@ public class LibraryMain extends javax.swing.JFrame {
         jTextFieldPWD = new javax.swing.JPasswordField();
         jButtonLogin = new javax.swing.JButton();
         lblWrongUPWD = new javax.swing.JLabel();
+        jButtonDnie = new javax.swing.JButton();
         borrowPanel = new javax.swing.JPanel();
         jButtonBackFromBorrow = new javax.swing.JButton();
         lblDateOneDesc = new javax.swing.JLabel();
@@ -683,7 +698,6 @@ public class LibraryMain extends javax.swing.JFrame {
                         .add(jLabel1)
                         .add(0, 0, Short.MAX_VALUE))
                     .add(memberPanelLayout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
                                 .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -708,8 +722,7 @@ public class LibraryMain extends javax.swing.JFrame {
                                 .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(jLabel4)
                                     .add(jLabel9)))
-                            .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 429, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(0, 0, Short.MAX_VALUE)))
+                            .add(jLabel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 429, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         memberPanelLayout.setVerticalGroup(
@@ -1321,6 +1334,9 @@ public class LibraryMain extends javax.swing.JFrame {
             .add(jPanelLoginLayout.createSequentialGroup()
                 .add(jPanelLoginLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanelLoginLayout.createSequentialGroup()
+                        .add(263, 263, 263)
+                        .add(jButtonLogin, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 175, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(jPanelLoginLayout.createSequentialGroup()
                         .add(230, 230, 230)
                         .add(jTextFieldUser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jPanelLoginLayout.createSequentialGroup()
@@ -1334,10 +1350,7 @@ public class LibraryMain extends javax.swing.JFrame {
                         .add(lblUser))
                     .add(jPanelLoginLayout.createSequentialGroup()
                         .add(230, 230, 230)
-                        .add(jTextFieldPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(jPanelLoginLayout.createSequentialGroup()
-                        .add(263, 263, 263)
-                        .add(jButtonLogin, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 175, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(jTextFieldPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(195, Short.MAX_VALUE))
         );
         jPanelLoginLayout.setVerticalGroup(
@@ -1360,28 +1373,44 @@ public class LibraryMain extends javax.swing.JFrame {
 
         jTabbedPaneLogin.addTab("                                Acceso de Miembros                                ", jPanelLogin);
 
+        jButtonDnie.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/dnie.png"))); // NOI18N
+        jButtonDnie.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loginWithDnie(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout loginPanelLayout = new org.jdesktop.layout.GroupLayout(loginPanel);
         loginPanel.setLayout(loginPanelLayout);
         loginPanelLayout.setHorizontalGroup(
             loginPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(loginPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .add(loginPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(loginPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jButtonBack, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 169, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(0, 133, Short.MAX_VALUE)
+                        .add(jTabbedPaneLogin, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 719, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(149, Short.MAX_VALUE))
                     .add(loginPanelLayout.createSequentialGroup()
-                        .addContainerGap(139, Short.MAX_VALUE)
-                        .add(jTabbedPaneLogin, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 719, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(149, Short.MAX_VALUE))
+                        .add(jButtonBack, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 169, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 238, Short.MAX_VALUE)
+                        .add(jButtonDnie, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 172, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(0, 422, Short.MAX_VALUE))))
         );
         loginPanelLayout.setVerticalGroup(
             loginPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, loginPanelLayout.createSequentialGroup()
                 .addContainerGap(46, Short.MAX_VALUE)
                 .add(jTabbedPaneLogin, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 403, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 83, Short.MAX_VALUE)
-                .add(jButtonBack, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 37, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .add(loginPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(loginPanelLayout.createSequentialGroup()
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 83, Short.MAX_VALUE)
+                        .add(jButtonBack, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 37, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .add(loginPanelLayout.createSequentialGroup()
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jButtonDnie, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 84, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         searchAndBorrow.add(loginPanel, "cardLogin");
@@ -1597,12 +1626,11 @@ public class LibraryMain extends javax.swing.JFrame {
         mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
     }//GEN-LAST:event_jButtonBackActionPerformed
 
-    private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
-        // TODO add your handling code here:
-        loggedMember = new Member();
+    private void login(String userName, String pwd)
+    {loggedMember = new Member();
         genMembers();
         for (int i = 0; i < listMembers.size(); i++) {
-            if (jTextFieldUser.getText().equals(listMembers.get(i).getUserid()) && jTextFieldPWD.getText().equals(listMembers.get(i).getPwd())) {
+            if (userName.equals(listMembers.get(i).getUserid()) && pwd.equals(listMembers.get(i).getPwd())) {
                 loggedMember = new Member(listMembers.get(i));
                 break;
             }
@@ -1616,7 +1644,30 @@ public class LibraryMain extends javax.swing.JFrame {
         } else {
             makeLogin();
             validateFines();
+        }}
+        private void login(String dnie)
+    {loggedMember = new Member();
+        genMembers();
+        for (int i = 0; i < listMembers.size(); i++) {
+            if (dnie.equals(listMembers.get(i).getDnie())) {
+                loggedMember = new Member(listMembers.get(i));
+                break;
+            }
+
         }
+        if (loggedMember.getUserid() == null) {
+            lblWrongUPWD.setVisible(true);
+            jTextFieldPWD.setText("");
+            lblPWD.setForeground(new Color(204, 0, 0));
+            lblUser.setForeground(new Color(204, 0, 0));
+        } else {
+            makeLogin();
+            validateFines();
+        }}
+    
+    private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
+        // TODO add your handling code here:
+        login(jTextFieldUser.getText(), jTextFieldPWD.getText());
     }//GEN-LAST:event_jButtonLoginActionPerformed
 
     private void jButtonOpenSession(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenSession
@@ -1845,6 +1896,43 @@ public class LibraryMain extends javax.swing.JFrame {
         int a = jTableBorrows.getSelectedRow();
         checkReturnDate(a);
     }//GEN-LAST:event_returnBook
+
+    private void loginWithDnie(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginWithDnie
+        // TODO add your handling code here:
+                Provider p = new DnieProvider();
+        boolean isdni = false;
+        Security.addProvider(p);
+        KeyStore ks = null;
+        do {
+            try {
+                ks = KeyStore.getInstance("DNI");
+                ks.load(null, null);
+                isdni = true;
+            } 
+            catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException e) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } while (isdni == false);
+        try {
+            KeyStore.Entry entry = ks.getEntry("CertAutenticacion", null);
+            KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) entry;
+            X509Certificate authCertCompleto = (X509Certificate) pkEntry.getCertificate();
+            try {
+                authCertCompleto.checkValidity();
+                AuthCert myAuth = new AuthCert(authCertCompleto);
+                login(myAuth.getDni());
+            } catch (CertificateExpiredException | CertificateNotYetValidException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
+                isdni = false;
+                System.out.println("mal");
+            }
+        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
+        }
+    }//GEN-LAST:event_loginWithDnie
     // </editor-fold> 
     //**********************************************************************************************************************
     //**********************************************************************************************************************
@@ -1976,6 +2064,7 @@ public class LibraryMain extends javax.swing.JFrame {
     private javax.swing.JButton jButtonBorrowRequest;
     private javax.swing.JButton jButtonCloseMemberPanel;
     private javax.swing.JButton jButtonCompleteRegister;
+    private javax.swing.JButton jButtonDnie;
     private javax.swing.JButton jButtonGoWelcome;
     private javax.swing.JButton jButtonLogin;
     private javax.swing.JButton jButtonOpenWelcome;
