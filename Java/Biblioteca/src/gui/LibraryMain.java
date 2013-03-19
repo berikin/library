@@ -80,17 +80,17 @@ public class LibraryMain extends javax.swing.JFrame {
             modelCopies.addElement(listCopies.get(i));
         }
     }
-
+    
     private void genMembers() {
         MemberDAL objMemberDAL = new MemberDAL();
         listMembers = objMemberDAL.getMembers();
     }
-
+    
     private void genBorrows() {
         BorrowDAL objBorrowDAL = new BorrowDAL();
         listBorrows = objBorrowDAL.getBorrows();
     }
-
+    
     private void genUserBorrows() {
         //GregorianCalendar d = new GregorianCalendar();
         if (tableModelBorrow.getRowCount() > 0) {
@@ -108,7 +108,7 @@ public class LibraryMain extends javax.swing.JFrame {
             tableModelBorrow.addRow(rowData);
         }
     }
-
+    
     private void genFines() {
         if (tableModelFine.getRowCount() > 0) {
             for (int i = tableModelFine.getRowCount() - 1; i > -1; i--) {
@@ -120,17 +120,22 @@ public class LibraryMain extends javax.swing.JFrame {
             tableModelFine.addRow(rowData);
         }
     }
-
+    
     private void fillMemberPanel() {
         genUserBorrows();
         genFines();
+        if (loggedMember.getDnie() != null) {
+            lblDniEUser.setVisible(true);
+        } else {
+            lblDniEUser.setVisible(false);
+        }
         jTextFieldMemberName.setText(loggedMember.getPersonName());
         jTextFieldMemberLastName.setText(loggedMember.getPersonLastName());
         jTextFieldMemberAddress.setText(loggedMember.getAddress());
         jTextFieldMemberPhone.setText(Integer.toString(loggedMember.getPhone()));
         jTextFieldMemberPWD.setText(loggedMember.getPwd());
     }
-
+    
     private void fillBorrow() {
         Date a = new Date();
         GregorianCalendar d = new GregorianCalendar(a.get(2), (a.get(1) - 1), a.get(0));
@@ -164,7 +169,7 @@ public class LibraryMain extends javax.swing.JFrame {
         }
         return false;
     }
-
+    
     private boolean validateFines() {
         if (!loggedMember.getFines().isEmpty()) {
             Date today = new Date();
@@ -183,27 +188,31 @@ public class LibraryMain extends javax.swing.JFrame {
 //**********************************************************************************************************************
 //**********************************************************************************************************************
 // <editor-fold defaultstate="collapsed" desc="// CLEAR FOR LOGIN & REGISTRATION PANELS/ MAKE LOGIN">   
-    private void clearLogin() {
-        jTextFieldUser.setText("");
-        lblWrongUPWD.setVisible(false);
-        jTextFieldPWD.setText("");
+    private void clearLogin(boolean eraseTXF) {
+        if (eraseTXF) {
+            jTextFieldUser.setText("");
+            jTextFieldPWD.setText("");
+        }
+        lblWrongUPWD.setText(" ");
+        lblWrongDNIE.setText(" ");
         lblPWD.setForeground(new Color(0, 0, 0));
         lblUser.setForeground(new Color(0, 0, 0));
     }
-
+    
     private void clearRegistration() {
         jTextFieldRegisterName.setText("Nombre...");
         jTextFieldRegisterLastName.setText("Apellidos...");
         jTextFieldRegisterAddress.setText("Dirección...");
         jTextFieldRegisterPhone.setText("Número de teléfono...");
         jTextFieldRegisterUserName.setText("Nombre de usuario...");
+        lblDniError.setText(" ");
         jTextRegisterPWD.setText("");
         lblFailedName.setVisible(false);
         lblFailedAddress.setVisible(false);
         lblFailedPhone.setVisible(false);
         lblFailedUserName.setVisible(false);
     }
-
+    
     private void makeLogin() {
         CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
         CardLayout cl2 = (CardLayout) (coverPanel.getLayout());
@@ -265,7 +274,7 @@ public class LibraryMain extends javax.swing.JFrame {
             }
         }
     }
-
+    
     private ArrayList<Copy> filterByTAI(ArrayList<Copy> auxCopies) {
         ArrayList<Copy> auxCopies2 = new ArrayList();
         String auxText = jTextFieldSearch.getText().toLowerCase();
@@ -308,7 +317,7 @@ public class LibraryMain extends javax.swing.JFrame {
             return false;
         }
     }
-
+    
     private boolean validateName() {
         if (!jTextFieldRegisterName.getText().equals("Nombre...")
                 && !jTextFieldRegisterLastName.getText().equals("Apellidos...")) {
@@ -319,7 +328,7 @@ public class LibraryMain extends javax.swing.JFrame {
             return false;
         }
     }
-
+    
     private boolean validatePhone() {
         try {
             String auxNumbStr = jTextFieldRegisterPhone.getText();
@@ -332,7 +341,7 @@ public class LibraryMain extends javax.swing.JFrame {
             return false;
         }
     }
-
+    
     private boolean validateUserName() {
         boolean userExist = false;
         String tryUser = jTextFieldRegisterUserName.getText();
@@ -395,6 +404,7 @@ public class LibraryMain extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jButtonReturnCopy = new javax.swing.JButton();
+        lblDniEUser = new javax.swing.JLabel();
         registerPanel = new javax.swing.JPanel();
         jButtonGoWelcome = new javax.swing.JButton();
         jTextFieldRegisterName = new javax.swing.JTextField();
@@ -411,6 +421,9 @@ public class LibraryMain extends javax.swing.JFrame {
         lblFailedAddress = new javax.swing.JLabel();
         lblFailedUserName = new javax.swing.JLabel();
         lblFailedPhone = new javax.swing.JLabel();
+        jButtonRegisterDNIE = new javax.swing.JButton();
+        lblDniError = new javax.swing.JLabel();
+        jTextFieldDnie = new javax.swing.JTextField();
         searchAndBorrow = new javax.swing.JPanel();
         searchPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -452,6 +465,7 @@ public class LibraryMain extends javax.swing.JFrame {
         jTextFieldPWD = new javax.swing.JPasswordField();
         jButtonLogin = new javax.swing.JButton();
         lblWrongUPWD = new javax.swing.JLabel();
+        lblWrongDNIE = new javax.swing.JLabel();
         jButtonDnie = new javax.swing.JButton();
         borrowPanel = new javax.swing.JPanel();
         jButtonBackFromBorrow = new javax.swing.JButton();
@@ -681,6 +695,11 @@ public class LibraryMain extends javax.swing.JFrame {
         });
         jButtonReturnCopy.setVisible(false);
 
+        lblDniEUser.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lblDniEUser.setForeground(new java.awt.Color(83, 112, 126));
+        lblDniEUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/dnie.png"))); // NOI18N
+        lblDniEUser.setText("Usuario Electrónico");
+
         org.jdesktop.layout.GroupLayout memberPanelLayout = new org.jdesktop.layout.GroupLayout(memberPanel);
         memberPanel.setLayout(memberPanelLayout);
         memberPanelLayout.setHorizontalGroup(
@@ -689,7 +708,8 @@ public class LibraryMain extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
-                        .add(0, 806, Short.MAX_VALUE)
+                        .add(lblDniEUser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 254, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .add(jButtonCloseMemberPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jScrollTableBorrows)
                     .add(jScrollTableFines)
@@ -711,7 +731,7 @@ public class LibraryMain extends javax.swing.JFrame {
                                 .add(18, 18, 18))
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
                                 .add(jButtonReturnCopy)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 427, Short.MAX_VALUE)))
                         .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(memberPanelLayout.createSequentialGroup()
                                 .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
@@ -729,8 +749,10 @@ public class LibraryMain extends javax.swing.JFrame {
             memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, memberPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(jButtonCloseMemberPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 92, Short.MAX_VALUE)
+                .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jButtonCloseMemberPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(lblDniEUser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 88, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 40, Short.MAX_VALUE)
                 .add(memberPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(memberPanelLayout.createSequentialGroup()
                         .add(jTextFieldMemberName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -930,7 +952,7 @@ public class LibraryMain extends javax.swing.JFrame {
         lblFailedAddress.setVisible(false);
 
         lblFailedUserName.setBackground(new java.awt.Color(230, 230, 230));
-        lblFailedUserName.setForeground(new java.awt.Color(204, 0, 51));
+        lblFailedUserName.setForeground(new java.awt.Color(204, 0, 0));
         lblFailedUserName.setText("Nombre de usuario en uso");
         lblFailedUserName.setVisible(false);
 
@@ -939,37 +961,63 @@ public class LibraryMain extends javax.swing.JFrame {
         lblFailedPhone.setText("Introduce un número de teléfono válido (solo números)");
         lblFailedPhone.setVisible(false);
 
+        jButtonRegisterDNIE.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
+        jButtonRegisterDNIE.setForeground(new java.awt.Color(83, 112, 126));
+        jButtonRegisterDNIE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/dnie.png"))); // NOI18N
+        jButtonRegisterDNIE.setText("Registro con");
+        jButtonRegisterDNIE.setFocusPainted(false);
+        jButtonRegisterDNIE.setFocusTraversalKeysEnabled(false);
+        jButtonRegisterDNIE.setFocusable(false);
+        jButtonRegisterDNIE.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jButtonRegisterDNIE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonRegisterDNIEActionPerformed(evt);
+            }
+        });
+
+        lblDniError.setBackground(new java.awt.Color(230, 230, 230));
+        lblDniError.setForeground(new java.awt.Color(204, 0, 0));
+        lblDniError.setText(" ");
+        lblFailedUserName.setVisible(false);
+
+        jTextFieldDnie.setToolTipText("");
+        jTextFieldDnie.setVisible(false);
+
         org.jdesktop.layout.GroupLayout registerPanelLayout = new org.jdesktop.layout.GroupLayout(registerPanel);
         registerPanel.setLayout(registerPanelLayout);
         registerPanelLayout.setHorizontalGroup(
             registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(registerPanelLayout.createSequentialGroup()
-                .addContainerGap(254, Short.MAX_VALUE)
+                .addContainerGap()
+                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jButtonRegisterDNIE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 233, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jTextFieldDnie, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 193, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(7, 7, 7)
                 .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(registerPanelLayout.createSequentialGroup()
-                        .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                        .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, registerPanelLayout.createSequentialGroup()
-                                .add(0, 0, Short.MAX_VALUE)
-                                .add(jButtonGoWelcome, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(registerPanelLayout.createSequentialGroup()
-                                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                .add(0, 0, 0)
+                                .add(lblDniError, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                .add(registerPanelLayout.createSequentialGroup()
+                                    .add(jTextFieldRegisterAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(18, 18, 18)
+                                    .add(jTextFieldRegisterPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .add(registerPanelLayout.createSequentialGroup()
+                                    .add(jTextFieldRegisterUserName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(18, 18, 18)
+                                    .add(jTextRegisterPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(registerPanelLayout.createSequentialGroup()
-                                        .add(jTextFieldRegisterAddress, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                        .add(jTextFieldRegisterName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                         .add(18, 18, 18)
-                                        .add(jTextFieldRegisterPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                                    .add(registerPanelLayout.createSequentialGroup()
-                                        .add(jTextFieldRegisterUserName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                        .add(18, 18, 18)
-                                        .add(jTextRegisterPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                                    .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                        .add(registerPanelLayout.createSequentialGroup()
-                                            .add(jTextFieldRegisterName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                            .add(18, 18, 18)
-                                            .add(jTextFieldRegisterLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                                        .add(jLabel5)
-                                        .add(lblFailedName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 494, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                                    .add(jLabel6))
-                                .add(0, 253, Short.MAX_VALUE)))
+                                        .add(jTextFieldRegisterLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                    .add(jLabel5)
+                                    .add(lblFailedName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 494, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .add(jLabel6)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(jButtonGoWelcome, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .add(registerPanelLayout.createSequentialGroup()
                         .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -979,7 +1027,7 @@ public class LibraryMain extends javax.swing.JFrame {
                                 .add(18, 18, 18)
                                 .add(lblFailedPhone, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 353, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                             .add(lblFailedUserName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(0, 0, Short.MAX_VALUE))))
+                        .add(0, 152, Short.MAX_VALUE))))
             .add(registerPanelLayout.createSequentialGroup()
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(jButtonCompleteRegister, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 189, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -989,10 +1037,16 @@ public class LibraryMain extends javax.swing.JFrame {
             registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, registerPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(jButtonGoWelcome, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 69, Short.MAX_VALUE)
-                .add(jLabel5)
-                .add(18, 18, 18)
+                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jButtonGoWelcome, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                        .add(jButtonRegisterDNIE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 84, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(lblDniError)))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 26, Short.MAX_VALUE)
+                .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel5)
+                    .add(jTextFieldDnie, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(registerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jTextFieldRegisterName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jTextFieldRegisterLastName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -1016,7 +1070,7 @@ public class LibraryMain extends javax.swing.JFrame {
                     .add(jTextRegisterPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(lblFailedUserName)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 48, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 43, Short.MAX_VALUE)
                 .add(jButtonCompleteRegister, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 36, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(42, 42, 42))
         );
@@ -1025,11 +1079,6 @@ public class LibraryMain extends javax.swing.JFrame {
 
         mainJTabbedPanel.addTab("                            Bienvenida                            ", coverPanel);
 
-        searchAndBorrow.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                ClearLogFromCard(evt);
-            }
-        });
         searchAndBorrow.setLayout(new java.awt.CardLayout());
 
         searchPanel.setBackground(new java.awt.Color(230, 230, 230));
@@ -1298,6 +1347,11 @@ public class LibraryMain extends javax.swing.JFrame {
                 colorToGrey(evt);
             }
         });
+        jTextFieldUser.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                clearWrongLog(evt);
+            }
+        });
 
         lblPWD.setText("Contraseña");
         lblPWD.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1315,8 +1369,16 @@ public class LibraryMain extends javax.swing.JFrame {
                 colorToGrey(evt);
             }
         });
+        jTextFieldPWD.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                clearWrongLog(evt);
+            }
+        });
 
         jButtonLogin.setText("Aceptar");
+        jButtonLogin.setFocusPainted(false);
+        jButtonLogin.setFocusTraversalKeysEnabled(false);
+        jButtonLogin.setFocusable(false);
         jButtonLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonLoginActionPerformed(evt);
@@ -1324,8 +1386,14 @@ public class LibraryMain extends javax.swing.JFrame {
         });
 
         lblWrongUPWD.setForeground(new java.awt.Color(204, 0, 0));
-        lblWrongUPWD.setText("Combinación de usuario y contraseña no válida");
-        lblWrongUPWD.setVisible(false);
+        lblWrongUPWD.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblWrongUPWD.setText(" ");
+        lblWrongUPWD.setToolTipText("");
+
+        lblWrongDNIE.setForeground(new java.awt.Color(204, 0, 0));
+        lblWrongDNIE.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblWrongDNIE.setText(" ");
+        lblWrongDNIE.setToolTipText("");
 
         org.jdesktop.layout.GroupLayout jPanelLoginLayout = new org.jdesktop.layout.GroupLayout(jPanelLogin);
         jPanelLogin.setLayout(jPanelLoginLayout);
@@ -1340,9 +1408,6 @@ public class LibraryMain extends javax.swing.JFrame {
                         .add(230, 230, 230)
                         .add(jTextFieldUser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jPanelLoginLayout.createSequentialGroup()
-                        .add(205, 205, 205)
-                        .add(lblWrongUPWD))
-                    .add(jPanelLoginLayout.createSequentialGroup()
                         .add(314, 314, 314)
                         .add(lblPWD))
                     .add(jPanelLoginLayout.createSequentialGroup()
@@ -1350,17 +1415,24 @@ public class LibraryMain extends javax.swing.JFrame {
                         .add(lblUser))
                     .add(jPanelLoginLayout.createSequentialGroup()
                         .add(230, 230, 230)
-                        .add(jTextFieldPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(195, Short.MAX_VALUE))
+                        .add(jTextFieldPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(jPanelLoginLayout.createSequentialGroup()
+                        .add(150, 150, 150)
+                        .add(jPanelLoginLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(lblWrongUPWD, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 398, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(lblWrongDNIE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 398, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                .add(150, 150, 150))
         );
         jPanelLoginLayout.setVerticalGroup(
             jPanelLoginLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanelLoginLayout.createSequentialGroup()
-                .add(48, 48, 48)
+                .addContainerGap()
+                .add(lblWrongDNIE)
+                .add(26, 26, 26)
                 .add(lblUser)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jTextFieldUser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 39, Short.MAX_VALUE)
+                .add(39, 39, 39)
                 .add(lblWrongUPWD)
                 .add(39, 39, 39)
                 .add(lblPWD)
@@ -1374,6 +1446,9 @@ public class LibraryMain extends javax.swing.JFrame {
         jTabbedPaneLogin.addTab("                                Acceso de Miembros                                ", jPanelLogin);
 
         jButtonDnie.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/dnie.png"))); // NOI18N
+        jButtonDnie.setFocusPainted(false);
+        jButtonDnie.setFocusTraversalKeysEnabled(false);
+        jButtonDnie.setFocusable(false);
         jButtonDnie.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginWithDnie(evt);
@@ -1539,17 +1614,17 @@ public class LibraryMain extends javax.swing.JFrame {
             jTextFieldSearch.setText("");
         }
     }//GEN-LAST:event_removeSearchText
-
+    
     private void doFilterSearch(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doFilterSearch
         // TODO add your handling code here:
         filterByState();
     }//GEN-LAST:event_doFilterSearch
-
+    
     private void doFilterSearchK(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_doFilterSearchK
         // TODO add your handling code here:
         filterByState();
     }//GEN-LAST:event_doFilterSearchK
-
+    
     private void displayItem(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_displayItem
         // TODO add your handling code here:
         Object a = jListCopies.getSelectedValue();
@@ -1599,7 +1674,7 @@ public class LibraryMain extends javax.swing.JFrame {
             jListAuthors.setModel(modelAuthors);
         }
     }//GEN-LAST:event_displayItem
-
+    
     private void jButtonBorrowRequestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBorrowRequestActionPerformed
         // TODO add your handling code here:
         borrowCopy = (Copy) jListCopies.getSelectedValue();
@@ -1620,56 +1695,56 @@ public class LibraryMain extends javax.swing.JFrame {
 
     private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
         // TODO add your handling code here:
-        clearLogin();
+        clearLogin(true);
         CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
         cl.show(searchAndBorrow, "cardSearchPanel");
         mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
     }//GEN-LAST:event_jButtonBackActionPerformed
-
-    private void login(String userName, String pwd)
-    {loggedMember = new Member();
+    
+    private void login(String userName, String pwd) {
+        loggedMember = new Member();
         genMembers();
         for (int i = 0; i < listMembers.size(); i++) {
             if (userName.equals(listMembers.get(i).getUserid()) && pwd.equals(listMembers.get(i).getPwd())) {
                 loggedMember = new Member(listMembers.get(i));
                 break;
             }
-
+            
         }
         if (loggedMember.getUserid() == null) {
-            lblWrongUPWD.setVisible(true);
+            lblWrongUPWD.setText("Combinación de usuario y contraseña no válida");
             jTextFieldPWD.setText("");
             lblPWD.setForeground(new Color(204, 0, 0));
             lblUser.setForeground(new Color(204, 0, 0));
         } else {
             makeLogin();
             validateFines();
-        }}
-        private void login(String dnie)
-    {loggedMember = new Member();
+        }
+    }
+    
+    private void login(String dnie) {
+        loggedMember = new Member();
         genMembers();
         for (int i = 0; i < listMembers.size(); i++) {
             if (dnie.equals(listMembers.get(i).getDnie())) {
                 loggedMember = new Member(listMembers.get(i));
                 break;
             }
-
+            
         }
         if (loggedMember.getUserid() == null) {
-            lblWrongUPWD.setVisible(true);
-            jTextFieldPWD.setText("");
-            lblPWD.setForeground(new Color(204, 0, 0));
-            lblUser.setForeground(new Color(204, 0, 0));
+            lblWrongDNIE.setText("Este Dni Electrónico no está asociado a ninguna cuenta");
         } else {
             makeLogin();
             validateFines();
-        }}
+        }
+    }
     
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
         // TODO add your handling code here:
         login(jTextFieldUser.getText(), jTextFieldPWD.getText());
     }//GEN-LAST:event_jButtonLoginActionPerformed
-
+    
     private void jButtonOpenSession(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenSession
         // TODO add your handling code here:
         CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
@@ -1678,14 +1753,14 @@ public class LibraryMain extends javax.swing.JFrame {
         mainJTabbedPanel.setSelectedIndex(1);
         destination = SwitchPanel.PREFERENCES;
     }//GEN-LAST:event_jButtonOpenSession
-
+    
     private void jButtonRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegisterActionPerformed
         // TODO add your handling code here:
         CardLayout cl = (CardLayout) (coverPanel.getLayout());
         cl.show(coverPanel, "registerCard");
         mainJTabbedPanel.setTitleAt(0, "                        Proceso de registro                       ");
     }//GEN-LAST:event_jButtonRegisterActionPerformed
-
+    
     private void jButtonCloseSession(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseSession
         // TODO add your handling code here:+
         CardLayout cl = (CardLayout) (searchAndBorrow.getLayout());
@@ -1693,54 +1768,49 @@ public class LibraryMain extends javax.swing.JFrame {
         loggedMember = new Member();
         cl.show(searchAndBorrow, "cardSearchPanel");
         mainJTabbedPanel.setTitleAt(1, "                             Búsqueda                             ");
-
+        
         cl2.show(coverPanel, "welcomeCard");
         mainJTabbedPanel.setTitleAt(0, "                            Bienvenida                            ");
     }//GEN-LAST:event_jButtonCloseSession
-
+    
     private void clearLog(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_clearLog
         // TODO add your handling code here:
-        clearLogin();
+        clearLogin(true);
     }//GEN-LAST:event_clearLog
-
-    private void ClearLogFromCard(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_ClearLogFromCard
-        // TODO add your handling code here:
-        clearLogin();
-    }//GEN-LAST:event_ClearLogFromCard
-
+    
     private void colorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_colorToWhite
         // TODO add your handling code here:
         JTextField txf = (JTextField) (evt.getComponent());
         txf.setBackground(new java.awt.Color(255, 255, 255));
     }//GEN-LAST:event_colorToWhite
-
+    
     private void colorToGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_colorToGrey
         // TODO add your handling code here:
         JTextField txf = (JTextField) (evt.getComponent());
         txf.setBackground(new java.awt.Color(222, 222, 222));
     }//GEN-LAST:event_colorToGrey
-
+    
     private void PWDColorToGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_PWDColorToGrey
         // TODO add your handling code here:
         JPasswordField txf = (JPasswordField) (evt.getComponent());
         txf.setBackground(new java.awt.Color(230, 230, 230));
         txf.setEchoChar('•');
-
+        
     }//GEN-LAST:event_PWDColorToGrey
-
+    
     private void PWDColorToWhite(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_PWDColorToWhite
         // TODO add your handling code here:
         JPasswordField txf = (JPasswordField) (evt.getComponent());
         txf.setBackground(new java.awt.Color(255, 255, 255));
         txf.setEchoChar((char) 0);
     }//GEN-LAST:event_PWDColorToWhite
-
+    
     private void colorToBrightGrey(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_colorToBrightGrey
         // TODO add your handling code here:
         JTextField txf = (JTextField) (evt.getComponent());
         txf.setBackground(new java.awt.Color(230, 230, 230));
     }//GEN-LAST:event_colorToBrightGrey
-
+    
     private void goToWelcome(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goToWelcome
         // TODO add your handling code here:
         clearRegistration();
@@ -1748,12 +1818,13 @@ public class LibraryMain extends javax.swing.JFrame {
         cl.show(coverPanel, "welcomeCard");
         mainJTabbedPanel.setTitleAt(0, "                            Bienvenida                            ");
     }//GEN-LAST:event_goToWelcome
-
+    
     private void tryRegistration(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tryRegistration
         // TODO add your handling code here:
         Member newMember = new Member();
         int aux = listMembers.size();
         newMember.setMemberID(aux);
+        newMember.setDnie(jTextFieldDnie.getText());
         newMember.setAddress(jTextFieldRegisterAddress.getText());
         newMember.setBorrowedCopies(new ArrayList<Borrow>());
         newMember.setFines(new ArrayList<Fine>());
@@ -1772,7 +1843,7 @@ public class LibraryMain extends javax.swing.JFrame {
         destination = SwitchPanel.PREFERENCES;
         makeLogin();
     }//GEN-LAST:event_tryRegistration
-
+    
     private void removeText(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_removeText
         // TODO add your handling code here:
         JTextField aux = (JTextField) evt.getSource();
@@ -1796,7 +1867,7 @@ public class LibraryMain extends javax.swing.JFrame {
                 break;
         }
     }//GEN-LAST:event_removeText
-
+    
     private void checkCompleteButton(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_checkCompleteButton
         // TODO add your handling code here:
                 /*        System.out.println(!jTextFieldRegisterName.getText().equals("Nombre..."));
@@ -1878,7 +1949,7 @@ public class LibraryMain extends javax.swing.JFrame {
         mainJTabbedPanel.setSelectedIndex(0);
         memberPanel.requestFocus();
     }//GEN-LAST:event_jButtonBorrowActionPerformed
-
+    
     private void activateReturnButton(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_activateReturnButton
         // TODO add your handling code here:
         int a = jTableBorrows.getSelectedRow();
@@ -1888,51 +1959,101 @@ public class LibraryMain extends javax.swing.JFrame {
         } else {
             jButtonReturnCopy.setVisible(false);
         }
-
+        
     }//GEN-LAST:event_activateReturnButton
-
+    
     private void returnBook(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnBook
         // TODO add your handling code here:
         int a = jTableBorrows.getSelectedRow();
         checkReturnDate(a);
     }//GEN-LAST:event_returnBook
-
+    @SuppressWarnings("engineGetCertificateChain")
     private void loginWithDnie(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginWithDnie
         // TODO add your handling code here:
-                Provider p = new DnieProvider();
+        AuthCert aux = dniE();
+        if (aux != null) {
+            login(aux.getDni());
+        }
+    }//GEN-LAST:event_loginWithDnie
+    
+    private AuthCert dniE() {
+        AuthCert myAuth = null;
+        JOptionPane.showConfirmDialog(null, "Introduce un DNI electrónico y espera...", "A la espera de DniE", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, new ImageIcon("/img/dnie.png"));
+        Provider p = new DnieProvider();
         boolean isdni = false;
         Security.addProvider(p);
         KeyStore ks = null;
-        do {
+        try {
+            ks = KeyStore.getInstance("DNI");
+            ks.load(null, null);
+            isdni = true;
+        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException e) {
+            lblDniError.setText("No ha introducido un DniE válido");
+            lblWrongDNIE.setText("No ha introducido un DniE válido");
+            return myAuth;
+            
+        }
+        if (isdni == true) {
+            X509Certificate authCertCompleto = null;
             try {
-                ks = KeyStore.getInstance("DNI");
-                ks.load(null, null);
-                isdni = true;
-            } 
-            catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException e) {
+                KeyStore.Entry entry = ks.getEntry("CertAutenticacion", null);
+                KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) entry;
+                authCertCompleto = (X509Certificate) pkEntry.getCertificate();
+            } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException | es.gob.jmulticard.ui.passwordcallback.CancelledOperationException e) {
+                isdni = false;
+                lblDniError.setText("Operación cancelada introduciendo la clave del DniE");
+                lblWrongDNIE.setText("Operación cancelada introduciendo la clave del DniE");
+                return myAuth;
+            }
+            if (isdni == true) {
                 try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    JOptionPane.showMessageDialog(null, ex.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
+                    authCertCompleto.checkValidity();
+                    myAuth = new AuthCert(authCertCompleto);
+                    return myAuth;
+                    //login(myAuth.getDni());
+                } catch (CertificateExpiredException | CertificateNotYetValidException e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
+                    isdni = false;
+                    lblDniError.setText("Error desconocido");
+                    lblWrongDNIE.setText("Error desconocido");
+                    return myAuth;
                 }
             }
-        } while (isdni == false);
-        try {
-            KeyStore.Entry entry = ks.getEntry("CertAutenticacion", null);
-            KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) entry;
-            X509Certificate authCertCompleto = (X509Certificate) pkEntry.getCertificate();
-            try {
-                authCertCompleto.checkValidity();
-                AuthCert myAuth = new AuthCert(authCertCompleto);
-                login(myAuth.getDni());
-            } catch (CertificateExpiredException | CertificateNotYetValidException e) {
-                JOptionPane.showMessageDialog(null, e.getMessage(), "" + "Error", JOptionPane.ERROR_MESSAGE);
-                isdni = false;
-                System.out.println("mal");
-            }
-        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
         }
-    }//GEN-LAST:event_loginWithDnie
+        lblDniError.setText("Error desconocido");
+        lblWrongDNIE.setText("Error desconocido");
+        return myAuth;
+    }
+    
+    private void clearWrongLog(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_clearWrongLog
+        // TODO add your handling code here:
+        clearLogin(false);
+    }//GEN-LAST:event_clearWrongLog
+    
+    private void jButtonRegisterDNIEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegisterDNIEActionPerformed
+        // TODO add your handling code here:
+        AuthCert aux = dniE();
+        boolean memberExists = false;
+        if (aux != null) {
+            loggedMember = new Member();
+            genMembers();
+            for (int i = 0; i < listMembers.size(); i++) {
+                if (aux.getDni().equals(listMembers.get(i).getDnie())) {
+                    memberExists = true;
+                    lblDniError.setText("Este DniE ya tiene una cuenta relacionada");
+                    break;
+                }
+            }
+            if (!memberExists) {
+                
+                jTextFieldRegisterName.setText(aux.getName());
+                jTextFieldRegisterName.setEditable(false);
+                jTextFieldRegisterLastName.setText(aux.getLastname());
+                jTextFieldRegisterLastName.setEditable(false);
+                jTextFieldDnie.setText(aux.getDni());
+            }
+        }
+    }//GEN-LAST:event_jButtonRegisterDNIEActionPerformed
     // </editor-fold> 
     //**********************************************************************************************************************
     //**********************************************************************************************************************
@@ -2020,7 +2141,7 @@ public class LibraryMain extends javax.swing.JFrame {
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
                 Logger.getLogger(LibraryMain.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+            
         } else if (System.getProperty("os.name").startsWith("Windows")) {
             try {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -2048,7 +2169,7 @@ public class LibraryMain extends javax.swing.JFrame {
                 new LibraryMain().setVisible(true);
             }
         });
-
+        
     }
 //**********************************************************************************************************************
 //**********************************************************************************************************************
@@ -2069,6 +2190,7 @@ public class LibraryMain extends javax.swing.JFrame {
     private javax.swing.JButton jButtonLogin;
     private javax.swing.JButton jButtonOpenWelcome;
     private javax.swing.JButton jButtonRegister;
+    private javax.swing.JButton jButtonRegisterDNIE;
     private javax.swing.JButton jButtonReturnCopy;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -2099,6 +2221,7 @@ public class LibraryMain extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPaneLogin;
     private javax.swing.JTable jTableBorrows;
     private javax.swing.JTable jTableFines;
+    private javax.swing.JTextField jTextFieldDnie;
     private javax.swing.JTextField jTextFieldMemberAddress;
     private javax.swing.JTextField jTextFieldMemberLastName;
     private javax.swing.JTextField jTextFieldMemberName;
@@ -2130,6 +2253,8 @@ public class LibraryMain extends javax.swing.JFrame {
     private javax.swing.JLabel lblCopyCode;
     private javax.swing.JLabel lblDateOneDesc;
     private javax.swing.JLabel lblDateTwoDesc;
+    private javax.swing.JLabel lblDniEUser;
+    private javax.swing.JLabel lblDniError;
     private javax.swing.JLabel lblEdition1;
     private javax.swing.JLabel lblEditorial;
     private javax.swing.JLabel lblFailedAddress;
@@ -2145,6 +2270,7 @@ public class LibraryMain extends javax.swing.JFrame {
     private javax.swing.JLabel lblWelcomeLibraryName;
     private javax.swing.JLabel lblWelcomePhoto;
     private javax.swing.JLabel lblWelcomeUser;
+    private javax.swing.JLabel lblWrongDNIE;
     private javax.swing.JLabel lblWrongUPWD;
     private javax.swing.JPanel loginPanel;
     private javax.swing.JLabel lvlISBN;
@@ -2176,7 +2302,7 @@ public class LibraryMain extends javax.swing.JFrame {
     //private DefaultTableModel tableModelBorrow = new DefaultTableModel(new Object[]{"Copia prestada", "Fecha de registro", "Fecha límite"}, 3);
 
     enum SwitchPanel {
-
+        
         BORROW, PREFERENCES, SEARCH;
     }
     ArrayList<Author> listAuthors;
